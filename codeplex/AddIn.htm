@@ -1,0 +1,38 @@
+<p>The <a href="http://nxll.codeplex.com/SourceControl/changeset/view/8595#134564" target="_blank"><code>AddIn</code></a> object stores The C function name (<code>Procedure</code>), the C signature (<code>TypeText</code> - a character string specifying the return type and C function argument types), the name Excel uses for your function (<code>FunctionText</code>), and the argument prompt (<code>ArgumentText</code>) that shows up after you type the function name and hit Ctrl-Shift-A. You can also specify the category (<code>Category</code>) and help text (<code>FunctionHelp</code>) used in the Function Wizard. This information is supplied to <a href="http://msdn.microsoft.com/en-us/library/bb687900.aspx" target="_blank"><code>xlfRegister</code> </a>when <code>xlAutoOpen</code> is called by Excel.</p>
+<p>There is more than one way to create <code>AddIn</code> objects. The simplest way is to specify the information Excel needs directly:</p>
+<div style="color: black; background-color: white;">
+<pre><span style="color: blue;">static</span> AddIn xai_function(
+    <span style="color: #a31515;">"?xll_function"</span>, XLL_LPOPER XLL_DOUBLE,
+    <span style="color: #a31515;">"XLL.FUNCTION"</span>, <span style="color: #a31515;">"Number"</span>,
+    <span style="color: #a31515;">"My Category"</span>, <span style="color: #a31515;">"Description of what the function does."</span>
+);
+</pre>
+</div>
+<p>The constructor for <code>AddIn</code> gets called by the linker when the add-in is opened and simply stores the information that will be needed by <code>Register</code> when Excel calls <code>xlAutoOpen</code>. The symbols <code>XLL_LPOPER</code> and <code>XLL_DOUBLE</code> are #define'd to be the character strings "P" and "B", respectively. The C preprocessor concatenates these for you which results in the TypeText argument being "PB". See <a href="http://nxll.codeplex.com/SourceControl/changeset/view/8595#134563" target="_blank"><code>defines.h</code> </a>for a complete list.</p>
+<p>Another way to do this is:</p>
+<div style="color: black; background-color: white;">
+<pre>    
+<span style="color: blue;">static</span> AddIn xai_function(
+    Function(XLL_LPOPER, <span style="color: #a31515;">"?xll_function"</span>, <span style="color: #a31515;">"XLL.FUNCTION"</span>)
+    .Arg(XLL_DOUBLE, <span style="color: #a31515;">"Number"</span>, <span style="color: #a31515;">"is a number "</span>)
+    .Category(<span style="color: #a31515;">"My Category"</span>)
+    .FunctionHelp(<span style="color: #a31515;">"Description of what the function does"</span>)
+);
+</pre>
+<p>One slight difference is that the Function Wizard will now&nbsp;tell you&nbsp;that <code>Number</code> "is a number".</p>
+<p>You still need to implement the actual function to be called. Here is how to do that:</p>
+<div style="color: black; background-color: white;">
+<pre>LPOPER WINAPI
+xll_function(<span style="color: blue;">double</span> x)
+{
+<span style="color: blue;">#pragma</span> XLLEXPORT
+      <span style="color: blue;">static</span> OPER oResult;
+
+      oResult = x;
+
+      <span style="color: blue;">return</span> &amp;oResult;
+}
+</pre>
+</div>
+<p>Some things to note: When specifying the procedure in the <code>AddIn</code> object you must prepend a question mark. <code>LPOPER</code> is the same as <code>OPER*</code>. An <code>OPER</code> is a C++ datatype that corresponds to a cell or a two dimensional range of cells. Every function that you register with Excel must be declared <code>WINAPI</code>. The first line of the body of the function has to be <code>#pragma XLLEXPORT</code>. We are returning the address of the <code>OPER</code> so it must be declared static so what is being pointed at will be around when Excel takes a look. Note we are assigning a double to an <code>OPER</code>. I went to a lot of trouble to make <a href="http://nxll.codeplex.com/wikipage?title=OPER&amp;referringTitle=AddIn"><code>OPER</code></a>s behave just as you would expect.</p>
+</div>

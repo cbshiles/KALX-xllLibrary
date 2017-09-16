@@ -1,0 +1,2 @@
+Let Category be an array. The second item is used to group topics.
+Facility to indicate start page for documentation.

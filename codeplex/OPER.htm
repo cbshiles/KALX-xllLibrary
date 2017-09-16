@@ -1,0 +1,130 @@
+<p>
+    The <code>OPER</code> class is a variant datatype that corresponds to a cell or
+    range of cells in an Excel spreadsheet. It can be a number, string, boolean, reference,
+    error, range, missing, nil, simple reference, or integer. It is a struct with a
+    member called <span class="codeInline">xltype</span> that can be any of the following
+    values.</p>
+<div style="color: black; background-color: white;">
+    <pre>#define xltypeNum        0x0001
+#define xltypeStr        0x0002
+#define xltypeBool       0x0004
+#define xltypeRef        0x0008
+#define xltypeErr        0x0010
+#define xltypeFlow       0x0020
+#define xltypeMulti      0x0040
+#define xltypeMissing    0x0080
+#define xltypeNil        0x0100
+#define xltypeSRef       0x0400
+#define xltypeInt        0x0800
+
+#define xlbitXLFree      0x1000
+#define xlbitDLLFree     0x4000
+
+#define xltypeBigData	(xltypeStr | xltypeInt)
+</pre>
+</div>
+<p>
+    Here is the Microsoft XLOPER struct from <a target="_blank"><code>XLCALL.H</code></a>:</p>
+<div style="color: black; background-color: white;">
+    <pre><span style="color: blue;">typedef</span> <span style="color: blue;">struct</span> xloper 
+{
+    <span style="color: blue;">union</span> 
+    {
+        <span style="color: blue;">double</span> num;	                  <span style="color: green;">/*
+            xltypeNum */</span>
+        LPSTR str;                   <span style="color: green;">/* xltypeStr */</span>
+#ifdef __cplusplus
+        WORD xbool;	                  <span style="color: green;">/* xltypeBool */</span>
+#<span style="color: blue;">else</span>	
+        WORD <span style="color: blue;">bool</span>;                   <span style="color: green;">/*
+            xltypeBool */</span>
+#endif	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WORD err;                    <span style="color: green;">/*
+    xltypeErr */</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue;">short</span> <span
+    style="color: blue;">int</span> w;                 <span style="color: green;">/* xltypeInt
+        */</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue;">struct</span> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     WORD count;              <span style="color: green;">/*
+    always = 1 */</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     XLREF ref;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } sref;                      <span style="color: green;">/*
+    xltypeSRef */</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue;">struct</span> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     XLMREF *lpmref;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     DWORD idSheet;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } mref;                      <span style="color: green;">/*
+    xltypeRef */</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue;">struct</span> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <span style="color: blue;">struct</span> xloper *lparray;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     WORD rows;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     WORD columns;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } <span style="color: blue;">array</span>;                     <span
+    style="color: green;">/* xltypeMulti */</span>
+       <span style="color: green;">// ...flow and bigdata removed...</span>
+    } val;
+    WORD xltype;
+} XLOPER, *LPXLOPER;
+</pre>
+</div>
+<p>
+    C++ is a strongly typed language, but the <span class="codeInline">OPER</span> class
+    is a wrapper around the <span class="codeInline">XLOPER</span> struct that was designed
+    to behave just as you would expect a variant to behave.</p>
+<div style="color: black; background-color: white;">
+    <pre>OPER o;
+assert (o.xltype == xltypeNil);
+	
+o = 1.23; <span style="color: green;">// or o = Num(1.23);</span>
+assert (o.xltype == xltypeNum);
+assert (o.val.num = 1.23);
+assert (o == 1.23 &amp;&amp; 1.23 == o);
+	
+o = OPER(<span style="color: #a31515;">"string"</span>); <span style="color: green;">//
+    or o = Str("string")</span>
+assert (o.xltype == xltypeStr);
+assert (o == OPER(<span style="color: #a31515;">"sTrInG"</span>)); <span style="color: green;">//
+    case insensitve</span>
+
+o = <span style="color: blue;">true</span>; <span style="color: green;">// or o = Bool(true);</span>
+assert (o.xltype == xltypeBool);
+assert (o);
+
+o = Err(xlerrValue); <span style="color: green;">// #VALUE!</span>
+assert (o.xltype == xltypeErr); 
+assert (o.val.err == xlerrValue);
+
+o = Excel&lt;XLOPER&gt;(xlfEvaluate, OPER(<span style="color: #a31515;">"{1,2,3;4,5,6}"</span>));
+<span style="color: green;">// or o = OPER(2, 3); o(0, 0) = 1; ...; o(1, 2) = 6;</span>
+assert (o.xltype == xltypeMulti);
+assert (o.val.<span style="color: blue;">array</span>.rows == 2);
+assert (o.val.<span style="color: blue;">array</span>.columns == 3);
+assert (o.val.<span style="color: blue;">array</span>.lparray[3].val.num == 4);
+assert (o[3] == 4);    <span style="color: green;">// same using 1-d index</span>
+assert (o(1, 0) == 4); <span style="color: green;">// same using 2-d index</span>
+
+assert (Missing().xltype == xltypeMissing);
+assert (Nil().xltype == xltypeNil);
+
+o = 123;
+assert (o.xltype == xltypeNum); <span style="color: green;">// not xltypeInt!</span>
+assert (o == 123);
+o = Int(123); <span style="color: green;">// if you really need an int</span>
+assert (o.xltype == xltypeInt);
+assert (o.val.w == 123); <span style="color: green;">// 16-bit short int</span>
+assert (o == 123);
+</pre>
+</div>
+<p>
+    Don't do <span class="codeInline">o = <span style="color: #a31515;">"a naked string"</span></span>
+    or the character pointer gets converted to a double and <span class="codeInline">o</span>
+    will have <span class="codeInline">xltype == xltypeNum</span> and <span class="codeInline">
+        o.val.num</span> equal to the value of the character pointer. You can only bend
+    C++ so far.</p>
+<p>
+    The function <a href="http://nxll.codeplex.com/wikipage?title=Excel&amp;referringTitle=Documentation">
+        <code>Excel</code></a> takes <code>OPER</code>s as arguments and gives you access
+    to all of Excel's functionality.</p>
