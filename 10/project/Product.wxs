@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <?define ProductVersion="1.0.5.0" ?>
+  
+  <Product Id="*" 
+           Name="xllproject" 
+           Language="1033" 
+           Codepage="1252"
+           Version="$(var.ProductVersion)" 
+           Manufacturer="KALX, LLC"
+           UpgradeCode="04270CD0-842D-461D-B0EE-43FA79332237"
+  >
+    <Package Id="*"
+            Description="Project wizard for creating Excel xll add-ins."
+            InstallerVersion="200"
+            Compressed="yes"
+            Manufacturer="KALX"
+    />
+
+    <Upgrade Id="04270CD0-842D-461D-B0EE-43FA79332237">
+      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
+      <UpgradeVersion OnlyDetect="no" Maximum="$(var.ProductVersion)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
+    </Upgrade>
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallFinalize" />
+    </InstallExecuteSequence>
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id="MSVS10" Name="Microsoft Visual Studio 10.0">
+          <Directory Id="VC" Name="VC">
+            <Directory Id="VcProjects" Name="vcprojects">
+              <!-- Overrides the parent folder -->
+              <Component Id="ProjectFiles" Guid="DF56AB4E-9315-412F-B0F1-11419FEC5D00">
+                <File Id="XllVsdir" Source="$(var.ProjectDir)xll.vsdir" />
+                <File Id="XllVsz" Source="$(var.ProjectDir)xll.vsz" />
+                <File Id="XllIco" Source="$(var.ProjectDir)xll.ico" />
+              </Component>
+            </Directory>
+            <Directory Id="VCWizards" Name="VCWizards">
+              <Directory Id="VCWAppWiz" Name="AppWiz">
+                <Directory Id="VCWAWxll" Name="xll">
+                  <Directory Id="VCWAWXScripts" Name="Scripts">
+                    <Directory Id="VCWAWXS1033" Name="1033">
+                      <Component Id="ScriptFiles" Guid="465128FE-6E0B-4791-9027-CD363C69BBB7">
+                        <File Id="DefaultJs" Source="$(var.ProjectDir)Scripts\1033\default.js" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                  <Directory Id="VCWAWXTemplates" Name="Templates">
+                    <Directory Id="VCWAWTS1033" Name="1033">
+                      <Component Id="TemplateFiles" Guid="607ED53F-2B54-4043-A9D8-37B70E43CDC2">
+                        <File Id="TemplatesInf" Source="$(var.ProjectDir)Templates\1033\Templates.inf" />
+                        <File Id="FunctionCpp" Source="$(var.ProjectDir)Templates\1033\function.cpp" />
+                        <File Id="MacroCpp" Source="$(var.ProjectDir)Templates\1033\macro.cpp" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                </Directory>
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="project" Level="1">
+			<ComponentRef Id="ProjectFiles" />
+      <ComponentRef Id="ScriptFiles" />
+      <ComponentRef Id="TemplateFiles" />
+    </Feature>
+	</Product>
+</Wix>
