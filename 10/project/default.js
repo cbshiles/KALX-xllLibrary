@@ -98,43 +98,51 @@ function AddFilters(proj)
 function AddConfig(proj, strProjectName) {
 	try
 	{
-		var shell = new ActiveXObject("WScript.Shell");
-		var pfiles = shell.RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\ProgramFilesDir");
-		var TargetDir = pfiles + "\\KALX\\xll\\";
-		// get full path to latest Excel version
+	    var shell = new ActiveXObject("WScript.Shell");
+//	    var pfiles = shell.ExpandEnvironmentStrings("%ProgramFiles%");
+//		var pfiles = shell.RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\ProgramFilesDir");
+		var TargetDir = "$(ProgramFiles)\\KALX\\xll\\";
+		// get latest Excel version
 		var path;
 		var excel;
+		var version;
 		try {
 			path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\14.0\\Excel\\InstallRoot\\Path";
 			excel = shell.RegRead(path);
+			version = "14";
 		}
         catch (e) {
             try {
                 path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\12.0\\Excel\\InstallRoot\\Path";
                 excel = shell.RegRead(path);
+                version = "12";
             }
             catch (e) {
                 try {
                     path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\11.0\\Excel\\InstallRoot\\Path";
                     excel = shell.RegRead(path);
+                    version = "11";
                 }
                 catch (e) {
                     try {
                         path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\10.0\\Excel\\InstallRoot\\Path";
                         excel = shell.RegRead(path);
+                        version = "10";
                     }
                     catch (e) {
                         try {
                             path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\9.0\\Excel\\InstallRoot\\Path";
                             excel = shell.RegRead(path);
+                            version = "9"
                         }
                         catch (e) {
                             try {
                                 path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\8.0\\Excel\\InstallRoot\\Path";
                                 excel = shell.RegRead(path);
+                                version = "8";
                             }
                             catch (e) {
-                                excel = ""; // warn???
+                                excel = "???"; // warn???
                             }
                         }
                     }
@@ -148,7 +156,7 @@ function AddConfig(proj, strProjectName) {
         var vcgeneral = config.Rules('ConfigurationGeneral');
 		vcgeneral.SetPropertyValue("TargetExt", ".xll")           
 
-		config.DebugSettings.Command = excel + 'EXCEL.EXE';
+		config.DebugSettings.Command = '$(ProgramFiles)\\Microsoft Office\\Office' + version + '\\EXCEL.EXE';
 		config.DebugSettings.CommandArguments = '"$(TargetPath)" /p "$(ProjectDir)"';
 		config.ConfigurationType = typeDynamicLibrary;
 		

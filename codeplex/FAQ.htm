@@ -1,0 +1,69 @@
+<h3>
+    Frequently Asked Questions</h3>
+<dl>
+    <dt><em>How come I am not seeing my function show up in the workbook or Function Wizard?</em></dt><dd>Most
+        likely because you didn't load it. If you are running in the debugger, be sure to
+        specify the full path to the Excel executable on your machine as the <code>Command</code>
+        and <code>"$(TargetPath)"</code> as <code>Command Arguments</code> in <code>Properties|Configuration
+            Properties|Debugging</code>.<br />
+        <br />
+    </dd>
+    <dt><em>When I open my <code>.xll</code> file in Excel nothing happens.</em></dt><dd>You
+        need to set macro security to low in order for Excel to register your functions
+        and macros. For Excel 2003 and earlier, go to <code>Tools|Options...</code> and
+        click on <code>Macro Security...</code> in the <code>Security</code> tab. For Excel
+        2007 and later, from the Office Button click on <code>Excel Options</code> next
+        to <code>Exit Excel</code> on the bottom right. On the Trust Center tab click on
+        <code>Trust Center Settings...</code> On the <code>Macro Settings</code> tab choose
+        <code>Enable all macros</code>.<br />
+        <br />
+    </dd>
+    <dt><em>How do I get my add-in to load every time I start Excel?</em> </dt>
+    <dd>
+        That is what the Excel <a href="http://office.microsoft.com/en-us/excel-help/load-or-unload-add-in-programs-HP010096834.aspx#BMexceladdin">
+            Add-in Manager</a> is for.<br />
+        <br />
+    </dd>
+    <dt><em>What is up with all those popups showing me errors and warnings?</em> </dt>
+    <dd>
+        The xll add-in library provides three levels of alerts: error, warning, and information.
+        Hit Alt-F8 and type <code>ALERT.FILTER</code> to control which of these you see.
+        <blockquote>
+            <img src="http://download.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=xll&amp;DownloadId=254916"
+                alt="Image of ALERT.FILTER" /></blockquote>
+        Your choices are stored in the registry when you hit OK so they persist between
+        Excel sessions. Hitting Cancel is equivalent to deselecting all alerts.<br />
+        <br />
+    </dd>
+    <dt><em>Why am I seeing a message box claiming Register failed for: X, where X is the
+        Excel name of one of my functions?</em></dt><dd>You forgot to insert <code>#pragma XLLEXPORT</code>
+            as the first line in the body of the corresponding C/C++ function.<br />
+            <br />
+        </dd>
+    <dt><em>What can I do if <code>XLL.DOC</code> is not generating my help file?</em></dt><dd>Look
+        in the Debug directory. You should see a folder with the same name as the xll you
+        are building. In that you will find <code>.log</code> files. Look through them in
+        alphabetical order for error messages.<br />
+        <br />
+    </dd>
+    <dt><em>Why is <code>malloc()</code> failing while trying to allocate large amounts
+        of memory?</em></dt><dd>You must compile with default char unsigned. <code>Properties|C/C++|Command
+            Line|Additional Options: /J<br />
+        </code>
+            <br />
+        </dd>
+    <dt><em>How come the last arguments in the constructor of <code>AddIn</code> end with
+        an extra character?</em></dt><dd>It is a known feature that persists in the Excel 2010
+            SDK that the last character gets truncated.<br />
+            <br />
+        </dd>
+    <dt><em>I'm using Vista/Windows 7 and can't veiw the Macrofun.hlp file.</em></dt><dd>You
+        need to install the Windows Help program. Just follow the directions<br />
+        <br />
+    </dd>
+    <dt><em>When I call my add-in function from Excel it returns <code>#VALUE</code>.</em></dt><dd>This
+        can occur when there is a mismatch between the C signature you specify in the second
+        argument to <code>AddIn</code> and the true signature.<br />
+        <br />
+    </dd>
+</dl>

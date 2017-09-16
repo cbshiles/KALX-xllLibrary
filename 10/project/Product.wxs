@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  
-  <?define ProductVersion="1.0.86.0" ?>
-  
-  <Product Id="*" 
-           Name="xllproject" 
-           Language="1033" 
+
+  <?define ProductVersion="2.7.30.0" ?>
+
+  <Product Id="*"
+           Name="xllproject"
+           Language="1033"
            Codepage="1252"
-           Version="$(var.ProductVersion)" 
+           Version="$(var.ProductVersion)"
            Manufacturer="KALX, LLC"
            UpgradeCode="04270CD0-842D-461D-B0EE-43FA79332237"
   >
@@ -37,6 +37,21 @@
     <Property Id='ARPREADME'>appreadme</Property>
     <Property Id='ARPSIZE'>4</Property>
 
+    <Property Id="VSINSTALLDIR">
+        <RegistrySearch Id="RegistrySearch" Root="HKLM" Type="directory"
+          Name="ShellFolder" Key="SOFTWARE\Microsoft\VisualStudio\10.0"/>
+    </Property>
+    <Property Id="VSINSTALLDIR64">
+        <RegistrySearch Id="RegistrySearch64" Root="HKLM" Type="directory"
+          Name="ShellFolder" Key="SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0"/>
+    </Property>
+    <!-- for 64-bit Windows -->
+    <SetProperty Id="VSINSTALLDIR" After="AppSearch" Value="[VSINSTALLDIR64]">
+        VSINSTALLDIR64
+    </SetProperty>
+
+    <CustomAction Id="SetInstallDir" Directory="MSVS10" Value="[VSINSTALLDIR]" />
+    
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='ProgramFilesFolder' Name='PFiles'>
         <Directory Id="MSVS10" Name="Microsoft Visual Studio 10.0">
@@ -87,10 +102,10 @@
     </Directory>
 
     <Feature Id="ProductFeature" Title="project" Level="1">
-			<ComponentRef Id="ProjectFiles" />
+      <ComponentRef Id="ProjectFiles" />
       <ComponentRef Id="ScriptFiles" />
       <ComponentRef Id="TemplateFiles" />
       <ComponentRef Id="ExpressProjectFiles" />
     </Feature>
-	</Product>
+  </Product>
 </Wix>

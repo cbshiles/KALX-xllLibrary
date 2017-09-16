@@ -1,0 +1,34 @@
+This is a library for creating xll add-in's for Excel from 97 through 2010. It makes every feature of the Excel 2010 SDK available to you including the big grid, wide character strings, and asynchronous functions. It is the easiest way to integrate your C and C++, or even Fortran, code into Excel to achieve the highest possible performance. You can also generate native documentation using the same tool Microsoft uses for their help files.
+
+If you need a small, fast, portable, and self contained way to extend Excel's functionality, this is the library for you. Just hand someone the xll and chm help file that you create and they are ready to go. No need to figure out what version of .Net they run, no Primary Interop Assemblies to worry about, no managed code that forces you to marshall data back and forth from Excel. There are also no automagic code generators, no proprietary markup languages to learn, and no wizards that hide things behind your back. Everything is just pure, modern, and readable C++.
+
+!!! INSTALLATION
+Run [url:setup.msi|http://kalx.net/dnload/setup.zip] and [url:project.msi|http://kalx.net/dnload/project.zip]. You will need to install [url:htmlhelp.exe|http://go.microsoft.com/fwlink/?LinkId=14188] from Microsoft's HTML Help Workshop to build documentation. Sadly, project templates do not work with VC++ 2010 Express. [7/1/2011 Fixed! Reinstall project.msi.]
+
+!!! OPERATION
+Start Visual Studio 2010.
+File > New > Project... select XLL AddIn Project.
+Change the Name and Location of the project to anything you desire.
+Right click on your project, Build.
+Right click on your project, Debug > Start new instance.
+
+If all goes well, you should see XLL.FUNCTION show up under My Category in the Function Wizard. You can set breakpoints by clicking to the left of any line in the source code for xll_function in the file function.cpp.
+
+To create HTML Help documentation, hit Alt-F8 then run XLL.DOC. Click on Help on this function in the Function Wizard to start the help viewer.
+
+: [image:http://download.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=nxll&DownloadId=251325]
+
+!!! CONGRATULATIONS!
+You have just created and documented your first Excel add-in. See the Documentation to learn about all the cool stuff you can do with this library.
+
+!!! CREDITS
+As with any non-trivial endeavor, this library leveraged off of the knowledge of others. I give special thanks to the people that have spent many hours over the years spelunking the deepest caves of the Excel SDK: Govert van Drimmelen, Mark Joshi, Jérôme LeCompte, Laurent Longre. Kudos to Eric Woodruff for his excellent Sandcastle Help File Builder that made it possible for me to carve out the subset of Sandcastle used here. My sincere apologies to anyone I've neglected to mention.
+
+!!!! TESTIMONIALS
+'Previously, we used VBA but it was so slow - by more than 70%!' - Ki-Hwan Bae
+
+!!!!! INSTALLATION AND OPERATION VIDEO 
+ {video:url=http://kalx.net/dnload/xll.wmv,type=windows}
+
+
+

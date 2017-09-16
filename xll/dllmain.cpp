@@ -3,7 +3,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
-#include "xll/auto.h"
+#include "auto.h"
+
+HMODULE hModule;
 
 #pragma warning(disable: 4100)
 extern "C"
@@ -12,6 +14,7 @@ DllMain(HMODULE hDLL, ULONG reason, LPVOID lpReserved)
 {
 	switch (reason) {
 		case DLL_PROCESS_ATTACH: 
+			hModule = hDLL;
 			DisableThreadLibraryCalls(hDLL);		
 			break;		
 		case DLL_THREAD_ATTACH:

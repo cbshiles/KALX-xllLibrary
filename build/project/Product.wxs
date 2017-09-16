@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?define ProductVersion="3.8.21" ?>
+  <?define VsVersion="10" ?>
+
+  <Product Id="*"
+           Name="xllproject$(var.VsVersion)"
+           Language="1033"
+           Codepage="1252"
+           Version="$(var.ProductVersion)"
+           Manufacturer="KALX, LLC"
+           UpgradeCode="04270CD0-842D-461D-B0EE-43FA79332237"
+  >
+    <Package Id="*"
+            Description="Project wizard for creating Excel xll add-ins."
+            InstallerVersion="200"
+            Compressed="yes"
+            Manufacturer="KALX"
+    />
+
+    <Upgrade Id="04270CD0-842D-461D-B0EE-43FA79332237">
+      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
+      <UpgradeVersion OnlyDetect="no" Maximum="$(var.ProductVersion)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
+    </Upgrade>
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallFinalize" />
+    </InstallExecuteSequence>
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Property Id='ARPCOMMENTS'>Install project template for Excel xll add-in library.</Property>
+    <Property Id='ARPCONTACT'>info@kalx.net</Property>
+    <Property Id='ARPHELPLINK'>https://xll.codeplex.com</Property>
+    <Property Id='ARPURLINFOABOUT'>https://xll.codeplex.com</Property>
+    <Property Id='ARPURLUPDATEINFO'>http://kalx.net/dnload/project$(var.VsVersion).zip</Property>
+    <Property Id='ARPREADME'>appreadme</Property>
+    <Property Id='ARPSIZE'>4</Property>
+
+    <Property Id="VSINSTALLDIR">
+        <RegistrySearch Id="RegistrySearch" Root="HKLM" Type="directory"
+          Name="ShellFolder" Key="SOFTWARE\Microsoft\VisualStudio\$(var.VsVersion).0"/>
+    </Property>
+    <Property Id="VSINSTALLDIR64">
+        <RegistrySearch Id="RegistrySearch64" Root="HKLM" Type="directory"
+          Name="ShellFolder" Key="SOFTWARE\Wow6432Node\Microsoft\VisualStudio\$(var.VsVersion).0"/>
+    </Property>
+    <!-- for 64-bit Windows -->
+    <SetProperty Id="VSINSTALLDIR" After="AppSearch" Value="[VSINSTALLDIR64]">
+        VSINSTALLDIR64
+    </SetProperty>
+
+    <CustomAction Id="SetInstallDir" Directory="MSVS" Value="[VSINSTALLDIR]" />
+    
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id="MSVS" Name="Microsoft Visual Studio $(var.VsVersion).0">
+          <Directory Id="VC" Name="VC">
+            <Directory Id="VcProjects" Name="vcprojects">
+              <!-- Overrides the parent folder -->
+              <Component Id="ProjectFiles" Guid="DF56AB4E-9315-412F-B0F1-11419FEC5D00">
+                <File Id="XllVsdir" Source="$(var.ProjectDir)xll.vsdir" ReadOnly="yes" />
+                <File Id="XllVsz" Source="$(var.ProjectDir)xll.vsz" ReadOnly="yes" />
+                <File Id="XllIco" Source="$(var.ProjectDir)xll.ico" ReadOnly="yes" />
+              </Component>
+            </Directory>
+            <Directory Id="Express" Name="Express">
+              <Directory Id="ExpressVcProjects" Name="VCProjects">
+                <Component Id="ExpressProjectFiles" Guid="A0C7C452-8F57-4860-9A43-FCD5A890331A">
+                  <File Id="ExpressXllVsdir" Source="$(var.ProjectDir)xll.vsdir" ReadOnly="yes" />
+                  <File Id="ExpressXllVsz" Source="$(var.ProjectDir)xll.vsz" ReadOnly="yes" />
+                  <File Id="ExpressXllIco" Source="$(var.ProjectDir)xll.ico" ReadOnly="yes" />
+                </Component>
+              </Directory>
+            </Directory>
+            <Directory Id="VCWizards" Name="VCWizards">
+              <Directory Id="VCWAppWiz" Name="AppWiz">
+                <Directory Id="VCWAWxll" Name="xll">
+                  <Directory Id="VCWAWXScripts" Name="Scripts">
+                    <Directory Id="VCWAWXS1033" Name="1033">
+                      <Component Id="ScriptFiles" Guid="465128FE-6E0B-4791-9027-CD363C69BBB7">
+                        <File Id="DefaultJs" Source="$(var.ProjectDir)default.js" ReadOnly="yes" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                  <Directory Id="VCWAWXTemplates" Name="Templates">
+                    <Directory Id="VCWAWTS1033" Name="1033">
+                      <Component Id="TemplateFiles" Guid="607ED53F-2B54-4043-A9D8-37B70E43CDC2">
+                        <File Id="TemplatesInf" Source="$(var.ProjectDir)Templates.inf" ReadOnly="yes" />
+                        <File Id="FunctionCpp" Source="$(var.ProjectDir)function.cpp" ReadOnly="yes" />
+                        <File Id="MacroCpp" Source="$(var.ProjectDir)macro.cpp" ReadOnly="yes" />
+                        <File Id="HeaderH" Source="$(var.ProjectDir)header.h" ReadOnly="yes" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                </Directory>
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="project" Level="1">
+      <ComponentRef Id="ProjectFiles" />
+      <ComponentRef Id="ScriptFiles" />
+      <ComponentRef Id="TemplateFiles" />
+      <ComponentRef Id="ExpressProjectFiles" />
+    </Feature>
+  </Product>
+</Wix>

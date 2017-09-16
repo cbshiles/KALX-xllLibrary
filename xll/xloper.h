@@ -2,7 +2,7 @@
 // Copyright (c) 2011 KALX, LLC. All rights reserved. No warranty is made.
 #pragma once
 #include <iostream>
-#include <utility>
+//#include <utility>
 #include "excel.h"
 
 // simple reference
@@ -43,7 +43,7 @@ public:
 	}
 	XMREF(const X& x)
 	{
-		if (x.xltype == xltypeRef) {
+		if (type(x) == xltypeRef) {
 			xltype = x.xltype;
 			val.mref.idSheet = x.val.mref.idSheet;
 			ref.count = 1;
@@ -58,7 +58,7 @@ public:
 	XMREF operator=(const X& x)
 	{
 		if (this != &x) {
-			if (x.xltype == xltypeRef) {
+			if (xll::type(x) == xltypeRef) {
 				xltype = x.xltype;
 				val.mref.idSheet = x.val.mref.idSheet;
 				ref.count = 1;
@@ -92,24 +92,31 @@ typedef XMREF<XLOPERX>  MREFX;
 
 namespace xll {
 
+
+	template<class X>
+	inline WORD type(const X& x)
+	{
+		return x.xltype&(~(xlbitXLFree|xlbitDLLFree));
+	}
+
 	template<class X>
 	inline typename traits<X>::xword rows(const X& x)
 	{
 		// xltypeRef, xltypeBigData?
-		return x.xltype == xltypeMulti ? x.val.array.rows 
-			: x.xltype == xltypeSRef ? x.val.sref.ref.rwLast - x.val.sref.ref.rwFirst + 1
-			: x.xltype == xltypeRef ? x.val.mref.lpmref->reftbl[0].rwLast - x.val.mref.lpmref->reftbl[0].rwFirst + 1
-			: x.xltype == xltypeMissing || x.xltype == xltypeNil ? 0
+		return type(x) == xltypeMulti ? x.val.array.rows 
+			: type(x) == xltypeSRef ? x.val.sref.ref.rwLast - x.val.sref.ref.rwFirst + 1
+			: type(x) == xltypeRef ? x.val.mref.lpmref->reftbl[0].rwLast - x.val.mref.lpmref->reftbl[0].rwFirst + 1
+			: type(x) == xltypeMissing || type(x) == xltypeNil ? 0
 			: 1;
 	}
 	template<class X>
 	inline typename traits<X>::xword columns(const X& x)
 	{
 		// xltypeRef, xltypeBigData?
-		return (x.xltype == xltypeMulti) ? x.val.array.columns 
-			: x.xltype == xltypeSRef ? x.val.sref.ref.colLast - x.val.sref.ref.colFirst + 1
-			: x.xltype == xltypeRef ? x.val.mref.lpmref->reftbl[0].colLast - x.val.mref.lpmref->reftbl[0].colFirst + 1
-			: x.xltype == xltypeMissing || x.xltype == xltypeNil ? 0
+		return (type(x) == xltypeMulti) ? x.val.array.columns 
+			: type(x) == xltypeSRef ? x.val.sref.ref.colLast - x.val.sref.ref.colFirst + 1
+			: type(x) == xltypeRef ? x.val.mref.lpmref->reftbl[0].colLast - x.val.mref.lpmref->reftbl[0].colFirst + 1
+			: type(x) == xltypeMissing || type(x) == xltypeNil ? 0
 			: 1;
 	}
 	template<class X>
@@ -123,7 +130,7 @@ namespace xll {
 	{
 		ensure (i < size(x));
 
-		if (x.xltype == xltypeMulti)
+		if (type(x) == xltypeMulti)
 			return x.val.array.lparray[i];
 		else
 			return x;
@@ -133,7 +140,7 @@ namespace xll {
 	{
 		ensure (i < size(x));
 
-		if (x.xltype == xltypeMulti)
+		if (type(x) == xltypeMulti)
 			return x.val.array.lparray[i];
 		else
 			return x;
@@ -145,7 +152,7 @@ namespace xll {
 		ensure (i < rows(x));
 		ensure (j < columns(x));
 
-		if (x.xltype == xltypeMulti)
+		if (type(x) == xltypeMulti)
 			return x.val.array.lparray[i*x.val.array.columns + j];
 		else
 			return x;
@@ -156,7 +163,7 @@ namespace xll {
 		ensure (i < rows(x));
 		ensure (j < columns(x));
 
-		if (x.xltype == xltypeMulti)
+		if (type(x) == xltypeMulti)
 			return x.val.array.lparray[i*x.val.array.columns + j];
 		else
 			return x;
@@ -165,30 +172,30 @@ namespace xll {
 	template<class X>
 	inline typename X* begin(X& x)
 	{
-		return (x.xltype == xltypeMulti) ? x.val.array.lparray : &x;
+		return (type(x) == xltypeMulti) ? x.val.array.lparray : &x;
 	}
 	template<class X>
 	inline const typename X* begin(const X& x)
 	{
-		return (x.xltype == xltypeMulti) ? x.val.array.lparray : &x;
+		return (type(x) == xltypeMulti) ? x.val.array.lparray : &x;
 	}
 	template<class X>
 	inline typename X* end(X& x)
 	{
-		return (x.xltype == xltypeMulti) ? x.val.array.lparray + size(x) : &x + 1;
+		return (type(x) == xltypeMulti) ? x.val.array.lparray + size(x) : &x + 1;
 	}
 	template<class X>
 	inline const typename X* end(const X& x)
 	{
-		return (x.xltype == xltypeMulti) ? x.val.array.lparray + size(x) : &x + 1;
+		return (type(x) == xltypeMulti) ? x.val.array.lparray + size(x) : &x + 1;
 	}
 
 	template<class X>
 	inline double to_number(const X& x)
 	{
-		double num;
+		double num(0);
 
-		switch (x.xltype) {
+		switch (type(x)) {
 		case xltypeNum:
 			num = x.val.num;
 
@@ -205,18 +212,13 @@ namespace xll {
 			num = 0; // so ensure(Err()) fails
 
 			break;
-		case xltypeMulti: {
-			if (size(x) == 1)
-				return to_number(x.val.array.lparray[0]);
-
-			num = 1; // 'if (x) {...}' fails if any 0 or FALSE entries
+		case xltypeMulti: { // first nonzero value???
 			for (traits<X>::xword i = 0; i < size(x); ++i) {
-				num = (0 != to_number(x.val.array.lparray[i]));
-				if (!num)
+				num = to_number(x.val.array.lparray[0]);
+				if (num)
 					break;
 			}
-
-
+			
 			break;
 		}
 		case xltypeMissing: case xltypeNil:
@@ -241,10 +243,10 @@ namespace xll {
 	{
 		traits<X>::xstring s;
 
-		if (x.xltype == xltypeStr) {
+		if (type(x) == xltypeStr) {
 			s = traits<X>::xstring(x.val.str + 1, x.val.str[0]);
 		}
-		else if (x.xltype == xltypeMulti) {
+		else if (type(x) == xltypeMulti) {
 			s = to_string(index(x, 0));
 			for (traits<X>::xword i = 1; i < size(x); ++i) {
 				if (i % columns(x) == 0) {
@@ -257,8 +259,15 @@ namespace xll {
 				s += to_string(index(x, i));
 			}
 		}
-		else if (x.xltype == xltypeErr) {
+		else if (type(x) == xltypeErr) {
 			s = traits<X>::Err(x.val.err);
+		}
+		else if (type(x) == xltypeSRef) {
+			LXOPER<X> y = Excel<X>(xlfReftext, x);
+			if (y.xltype != xltypeStr)
+				s = traits<X>::Err(xlerrValue);
+			else
+				s = traits<X>::xstring(y.val.str + 1, y.val.str[0]); 
 		}
 		else {
 			LXOPER<X> y = Excel<X>(xlfText, x, traits<X>::format());
@@ -274,10 +283,10 @@ namespace xll {
 	template<class X>
 	inline bool operator_equals(const X& x, const X& y)
 	{
-		if (x.xltype != y.xltype)
+		if (type(x) != y.xltype)
 			return false;
 
-		switch (x.xltype) {
+		switch (type(x)) {
 			case xltypeNum:
 				return x.val.num == y.val.num;
 			case xltypeStr:
@@ -313,12 +322,12 @@ namespace xll {
 	template<class X>
 	inline bool operator_less(const X& x, const X& y)
 	{
-		if (x.xltype < y.xltype)
+		if (type(x) < y.xltype)
 			return true;
-		if (x.xltype > y.xltype)
+		if (type(x) > y.xltype)
 			return false;
 
-		switch (x.xltype) {
+		switch (type(x)) {
 			case xltypeNum:
 				return x.val.num < y.val.num;
 			case xltypeStr:
@@ -357,24 +366,57 @@ namespace xll {
 	}
 } // namespace xll
 
-using namespace std::rel_ops;
+//using namespace std::rel_ops;
 
 // These go in the global namespace.
 inline bool operator==(const XLOPER12& x, const XLOPER12& y)
 {
 	return xll::operator_equals<XLOPER12>(x, y);
 }
+inline bool operator!=(const XLOPER12& x, const XLOPER12& y)
+{
+	return !xll::operator_equals<XLOPER12>(x, y);
+}
 inline bool operator<(const XLOPER12& x, const XLOPER12& y)
 {
 	return xll::operator_less<XLOPER12>(x, y);
 }
+inline bool operator>=(const XLOPER12& x, const XLOPER12& y)
+{
+	return !xll::operator_less<XLOPER12>(x, y);
+}
+inline bool operator<=(const XLOPER12& x, const XLOPER12& y)
+{
+	return xll::operator_less<XLOPER12>(x, y) || xll::operator_equals<XLOPER12>(x, y);
+}
+inline bool operator>(const XLOPER12& x, const XLOPER12& y)
+{
+	return !(x <= y);
+}
+
 inline bool operator==(const XLOPER& x, const XLOPER& y)
 {
 	return xll::operator_equals<XLOPER>(x, y);
 }
+inline bool operator!=(const XLOPER& x, const XLOPER& y)
+{
+	return !xll::operator_equals<XLOPER>(x, y);
+}
 inline bool operator<(const XLOPER& x, const XLOPER& y)
 {
 	return xll::operator_less<XLOPER>(x, y);
+}
+inline bool operator>=(const XLOPER& x, const XLOPER& y)
+{
+	return !xll::operator_less<XLOPER>(x, y);
+}
+inline bool operator<=(const XLOPER& x, const XLOPER& y)
+{
+	return xll::operator_less<XLOPER>(x, y) || xll::operator_equals<XLOPER>(x, y);
+}
+inline bool operator>(const XLOPER& x, const XLOPER& y)
+{
+	return !operator<=(x, y);
 }
 
 

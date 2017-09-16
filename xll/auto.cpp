@@ -4,12 +4,12 @@
 
 using namespace xll;
 
+// Called by Excel when the xll is opened.
 extern "C" 
-int WINAPI
+int __declspec(dllexport) WINAPI
 xlAutoOpen(void)
 {
 	try {
-//		Auto<Open>::AutoOpen();
 		ensure (Auto<Open>::Call());
 		ensure (AddIn::RegisterAll());
 		ensure (Auto<OpenAfter>::Call());
@@ -19,7 +19,16 @@ xlAutoOpen(void)
 			ensure (AddIn12::RegisterAll());
 			ensure (Auto<OpenAfter12>::Call());
 		}
-		
+
+		// register OnXXX macros
+		ensure (On<Data>::Open());
+		ensure (On<Doubleclick>::Open());
+		ensure (On<Entry>::Open());
+		ensure (On<Key>::Open());
+		ensure (On<Recalc>::Open());
+		ensure (On<Sheet>::Open());
+		ensure (On<Time>::Open());
+		ensure (On<Window>::Open());
 	}
 	catch (const std::exception& ex) {
 		Excel<XLOPER>(xlcAlert, Str(ex.what()));
@@ -31,12 +40,11 @@ xlAutoOpen(void)
 }
 
 extern "C"
-int WINAPI
+int __declspec(dllexport) WINAPI
 xlAutoClose(void)
 {
 	try {
 		ensure (Auto<Close>::Call());
-//		Auto<Close>::AutoClose();
 		if (XLCallVer() >= 0x0C00) {
 			ensure (Auto<Close12>::Call());
 		}
@@ -51,7 +59,7 @@ xlAutoClose(void)
 }
 
 extern "C"
-int WINAPI
+int __declspec(dllexport) WINAPI
 xlAutoAdd(void)
 {
 	try {
@@ -70,7 +78,7 @@ xlAutoAdd(void)
 }
 
 extern "C"
-int WINAPI
+int __declspec(dllexport) WINAPI
 xlAutoRemove(void)
 {
 	try {
@@ -84,6 +92,16 @@ xlAutoRemove(void)
 			ensure (Auto<Remove12>::Call());
 		}
 
+		// unregister OnXXX macros
+		ensure (On<Data>::Close());
+		ensure (On<Doubleclick>::Close());
+		ensure (On<Entry>::Close());
+		ensure (On<Key>::Close());
+		ensure (On<Recalc>::Close());
+		ensure (On<Sheet>::Close());
+		ensure (On<Time>::Close());
+		ensure (On<Window>::Close());
+
 	}
 	catch (const std::exception& ex) {
 		Excel<XLOPER>(xlcAlert, Str(ex.what()));
@@ -95,21 +113,27 @@ xlAutoRemove(void)
 }
 
 extern "C"
-void WINAPI
-xlAutoFree(LPXLOPER px)
+void __declspec(dllexport) WINAPI
+xlAutoFree(LPOPER px)
 {
-	Auto<Free>::Call(px);
+	if ((px->xltype)&xlbitDLLFree)
+		delete px;
+	else if ((px->xltype)&xlbitXLFree)
+		Excel4(xlFree, 0, 1, px);
 }
 
 extern "C"
-void WINAPI
-xlAutoFree12(LPXLOPER12 px)
+void __declspec(dllexport) WINAPI
+xlAutoFree12(LPOPER12 px)
 {
-	Auto<Free12>::Call(px);
+	if ((px->xltype)&xlbitDLLFree)
+		delete px;
+	else if ((px->xltype)&xlbitXLFree)
+		Excel12(xlFree, 0, 1, px);
 }
 
 extern "C"
-LPXLOPER WINAPI 
+LPXLOPER __declspec(dllexport) WINAPI 
 xlAutoRegister(LPXLOPER pxName)
 {
 	static OPER xResult;
@@ -131,7 +155,7 @@ xlAutoRegister(LPXLOPER pxName)
 }
 
 extern "C"
-LPXLOPER12 WINAPI 
+LPXLOPER12 __declspec(dllexport) WINAPI 
 xlAutoRegister12(LPXLOPER12 pxName)
 {
 	static OPER12 xResult;

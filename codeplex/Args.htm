@@ -1,0 +1,22 @@
+<p>
+    The <a href="http://xll.codeplex.com/SourceControl/changeset/view/8651#134547">Args</a>&nbsp;class
+    represents the arguments passed to <code>Register</code>. It can also be used for
+    creating beautiful documentation using Sandcastle. The member functions correspond
+    to the arguments required by <code>xlfRegister</code> except for the function <code>
+        Documentation</code> which allows for additional documentation to be generated
+    by the macro&nbsp;<code>XLL.DOC</code>.</p>
+<p>
+    The <code>AddIn</code> data is used to automatically generate Microsoft AML documents
+    that Sandcastle can process into various forms of documentation. See the excellent
+    <a href="http://sandcastlestyles.codeplex.com/">Sandcastle MAML Guide</a> for all
+    the details. By default, the macro generates a Conceptual topics page that shows
+    the <strong>Syntax</strong> and contains a table of the arguments to the function
+    along with a short description.</p>
+<p>
+    The optional first argument to <code>AddIn::Documentation</code> is a string that
+    will added to the <strong>Remarks</strong> owner() unless it starts with a left
+    angle bracket (&lt;). In that case it is assumed the string already contains all
+    the necessary markup and is pasted directly into the Conceptual document being generated.
+    If an optional second argument is provided it will be placed in the <strong>See Also</strong>
+    owner() of the document. Use <code>xml::xlink</code> and <code>xml::externalLink</code>
+    to create internal cross references and external links respectively.</p>

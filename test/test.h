@@ -3,3 +3,5 @@
 // Build for Excel 2007 and later if defined
 //#define EXCEL12
 #include "xll/xll.h"
+
+typedef xll::traits<XLOPERX>::xchar xchar;

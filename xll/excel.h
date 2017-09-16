@@ -3,7 +3,7 @@
 #pragma once
 #include "loper.h"
 
-#define ExcelX Excel<XLOPERX>
+#define ExcelX xll::Excel<XLOPERX>
 
 namespace xll {
 
@@ -36,7 +36,7 @@ namespace xll {
 				case xlretNotClusterSafe: 
 					throw std::runtime_error("Excel returned not supported on cluster");
 				default:                  
-					throw std::runtime_error("Excel returned an unknown error! This should never happen");
+					throw std::runtime_error("Excel returned an unknown error. This should never happen!");
 			}
 		}
 	}
@@ -179,6 +179,38 @@ namespace xll {
 
 		return LXOPER<X>(x, true);
 	}
+	template<class X>
+	LXOPER<X> Excel(int f, const X& x0, const X& x1, const X& x2, const X& x3,
+		const X& x4, const X& x5, const X& x6, const X& x7, const X& x8, const X& x9,
+		const X& x10, const X& x11)
+	{
+		X x;
 
+		throw_if (traits<X>::Excel(f, &x, 7, &x0, &x1, &x2, &x3,
+			&x4, &x5, &x6, &x7, &x8, &x9, &x10, &x11));
+
+		return LXOPER<X>(x, true);
+	}
+	template<class X>
+	LXOPER<X> Excel(int f, const X& x0, const X& x1, const X& x2, const X& x3,
+		const X& x4, const X& x5, const X& x6, const X& x7, const X& x8, const X& x9,
+		const X& x10, const X& x11, const X& x12)
+	{
+		X x;
+
+		throw_if (traits<X>::Excel(f, &x, 7, &x0, &x1, &x2, &x3,
+			&x4, &x5, &x6, &x7, &x8, &x9, &x10, &x11, &x12));
+
+		return LXOPER<X>(x, true);
+	}
+
+}
+
+// Detects if UDF is being called from the function wizard.
+// Does not work for Excel 2007 and above.
+template<class X>
+inline bool in_function_wizard(void)
+{
+	return !Excel<X>(xlfGetTool, XOPER<X>(4), XOPER<X>(_T("Standard")), XOPER<X>(1));
 }
 

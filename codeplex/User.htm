@@ -1,0 +1,88 @@
+<h2>Creating Excel add-ins using the xll library</h2>
+<p>
+    Creating Excel add-ins from scratch&nbsp;is not trivial, as anyone who has attempted
+    to do so using the <a href="http://msdn.microsoft.com/en-us/library/bb687883.aspx">Microsoft
+        Excel SDK</a> soon realizes. A good exercise would be to download that and attempt
+    to create your own add-in.</p>
+<p>
+    Back already? I can't blame you.</p>
+<p>
+    An xll add-in is just a dll with well-known entry points. When the add-in is opened,
+    Excel looks for a function called <code>xlAutoOpen</code> and calls it. When the
+    add-in is closed, Excel looks for a function called <code>xlAutoClose</code> and
+    calls that. The job of <code>xlAutoOpen</code> is to register functions that can
+    extend the functionality of Excel, while that of <code>xlAutoClose</code> is to
+    unregister the functions.</p>
+<p>
+    The xll library provides these functions for you so you don't have to write them.
+    All you need to do is create <code>AddIn</code> objects with the information Excel
+    needs to register and unregister add-in functions and macros. Click on each class
+    to learn more.</p>
+<blockquote>
+    <table border="0">
+        <tbody>
+            <tr>
+                <th>
+                    class
+                </th>
+                <th>
+                    description
+                </th>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=AddIn&amp;referringTitle=Documentation">
+                        <code>AddIn</code></a>
+                </td>
+                <td>
+                    The class for creating Excel add-in functions and macros.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=OPER&amp;referringTitle=Documentation">
+                        <code>OPER</code></a>
+                </td>
+                <td>
+                    The variant datatype corresponding to a cell or range of cells.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=Excel&amp;referringTitle=Documentation">
+                        <code>Excel</code></a>
+                </td>
+                <td>
+                    Calls Excel internal functions and macros.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=Register&amp;referringTitle=Documentation">
+                        <code>Register</code></a>
+                </td>
+                <td>
+                    Call <code>xlfRegister</code> with the appropriate arguments.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=Args&amp;referringTitle=Documentation">
+                        <code>Args</code></a>
+                </td>
+                <td>
+                    Arguments passed to <code>Register</code>.
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="http://xll.codeplex.com/wikipage?title=FP&amp;referringTitle=Documentation">
+                        <code>FP</code></a>
+                </td>
+                <td>
+                    A two dimensional array of floating point numbers.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</blockquote>

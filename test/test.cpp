@@ -1,6 +1,7 @@
 // test.cpp - Exercise the xll add-in library.
 // Copyright (c) 2011 KALX, LLC. All rights reserved. No warranty is made.
 // Uncomment to build for Excel 2007 and later.
+#include <sstream>
 #include "test.h"
 /*
 #include "xll/utility/hash.h"
@@ -315,14 +316,13 @@ void
 test_loper(void)
 {
 	LOPERX o;
-	ensure (!o.owner);
+	ensure (!o.owner());
 
 	LOPERX o2(o);
-	ensure (!o2.owner);
+	ensure (!o2.owner());
 	
 	LOPERX o3(o, true);
-	ensure (o3.owner);
-	o3.owner = false; // don't want xlFree called
+	ensure (o3.owner());
 
 	LOPERX* po4;
 	{
@@ -330,10 +330,10 @@ test_loper(void)
 		// str != num
 		ensure (o4 != ExcelX(xlfYear, ExcelX(xlfNow)));
 		ensure (ExcelX(xlfValue, o4) == ExcelX(xlfYear, ExcelX(xlfNow)));
-		ensure (o4.owner);
+		ensure (o4.owner());
 		po4 = (LOPERX*)&o4; // operator& returns LPXLOPER
 	}
-	ensure (!po4->owner);
+	ensure (!po4->owner());
 
 	OPERX o5 = ExcelX(xlfLen, ExcelX(xlfNow));
 	ensure (o5.xltype == xltypeNum);
@@ -446,7 +446,16 @@ test_oper(void)
 	ensure (m4.size() == 2);
 	ensure (m4.xltype == xltypeMulti);
 	ensure (m4[1] == 1.23);
+}
 
+void
+test_rvalue(void)
+{
+	OPERX o;
+	
+	o = OPERX(_T("foo"));
+	ensure (o.xltype == xltypeStr);
+	ensure (o == _T("foo"));
 }
 
 void
@@ -590,7 +599,7 @@ test_multi(void)
 	ensure(x);
 	x[0] = true;
 	x[1] = false;
-	ensure (!x); // not all entries are true
+	ensure (x); // 
 
 	x.resize(1, 1);
 	ensure (x);
@@ -782,6 +791,14 @@ test_mref(void)
 	ensure (r.val.mref.lpmref->reftbl[0].colLast == 5);
 }
 
+void
+test_error(void)
+{
+	DWORD level = xll_alert_levelx;
+	xll_alert_levelx = XLL_ALERT_WARNING;
+	xll_alert_levelx = level;
+}
+
 int
 xll_test(void)
 {
@@ -800,11 +817,14 @@ xll_test(void)
 		test_oper_relops();
 		test_bigdata();
 		test_mref();
+		test_rvalue();
 
 		test_hash();
 		test_find();
 
 		test_excelv();
+
+		test_error();
 
 //		test_handle();
 	}
@@ -831,27 +851,23 @@ xll_macro(void)
 
 	return 1;
 }
-int
-xai_macro(void)
-{
-	Register<XLOPERX>(_T("?xll_macro"), _T("XLL.MACRO"));
-
-	return 1;
-}
-static Auto<OpenAfter> xao_macro(xai_macro);
 
 // register worksheet function
 double WINAPI
 xll_function(double num)
 {
 #pragma XLLEXPORT
+	bool b;
+
+	b = in_function_wizard();
 
 	return 2*num;
 }
+/*
 int
 xai_function(void)
 {
-	Register<XLOPERX>(_T("?xll_function"), XLL_DOUBLEX XLL_DOUBLEX, _T("XLL.FUNCTION"), _T("Num"));
+	Register<XLOPERX>(_T("?xll_function"), XLL_DOUBLEX XLL_DOUBLEX XLL_UNCALCEDX, _T("XLL.FUNCTION"), _T("Num"));
 
 	return 1;
 }
@@ -898,7 +914,7 @@ xai_loper(void)
 	return 1;
 }
 static Auto<OpenAfter> xao_loper(xai_loper);
-
+*/
 // The right way to do it.
 static AddInX xai_sqrt(
 	_T("?xll_sqrt"), XLL_LPXLOPERX XLL_DOUBLEX,
@@ -937,37 +953,57 @@ xll_foo(void)
 	return 37337;
 }
 
+#define CATEGORY _T("Foo Category")
+
+static AddInX xai_foo_category(
+	DocumentX(CATEGORY)
+	.Documentation(_T("This is the foo documentation."))
+);
+
 static AddInX xai_foo2(
 	ArgsX(XLL_DOUBLEX, _T("?xll_foo2"), _T("XLL.FOO2"))
-	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string "))
+	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string "), OPERX(_T("A string")))
+	.Category(CATEGORY)
+	.FunctionHelp(_T("Returns the length of Str."))
+	.Documentation(_T("Documentation for XLL.FOO2 and XLL.FOOTWO."))
 	.Alias(_T("XLL.FOOTWO"))
+	.Authorize()
 );
 double WINAPI
 xll_foo2(LPCTSTR str)
 {
 #pragma XLLEXPORT
 
-	return _tcsclen(str);
+	return static_cast<double>(_tcsclen(str));
 }
+
+// New Excel function with shared implementation.
+static AddInX xai_foodeux(
+	ArgsX(XLL_DOUBLEX, _T("?xll_foo2"), _T("XLL.FOODEUX"))
+	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string "))
+	.Category(CATEGORY)
+	.FunctionHelp(_T("Returns the length of Str."))
+	.Documentation(_T("Documentation for XLL.FOODEUX."))
+);
 
 using xml::element;
 
-#define CATEGORY _T("Foo Category")
 /*
 static AddInX xai_foo_doc(
 	ArgsX(CATEGORY)
-	.Documentation(xml::File(_T("cuda.xml")))
+	.Documentation(xml::File(Directory::Basename(_T(__FILE__)).append(_T("cuda.xml")).c_str()))
 );
 */
+/*
 static AddInX xai_foo_doc(
 	ArgsX(CATEGORY)
 	.Documentation(_T("This is some documentation."))
 );
-
+*/
 static AddInX xai_foo3(
 	ArgsX(XLL_LPOPERX, _T("?xll_foo3"), _T("XLL.FOO3")) 
-	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string"))
-	.Arg(XLL_BOOLX, _T("Bool"), _T("is a boolean "))
+	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string"), OPERX(_T("A string")))
+	.Arg(XLL_BOOLX, _T("Bool"), _T("is a boolean "), OPERX(true))
 	.Sort(_T("2")) // after foo4
 	.Category(_T("Foo Category"))
 	.FunctionHelp(_T("Returns string or boolean."))
@@ -992,39 +1028,6 @@ MATH(VAR(e) SUP(ENT_pi VAR(i)) _T(" = - 1"))
 */
 using namespace xml;
 
-#define V_(v) _T("<markup><i>") e _T("</i></markup>")
-// Documentation
-static AddInX xai_foo4(
-	FunctionX(XLL_DOUBLEX, _T("?xll_foo4"), _T("XLL.FOO4") _T("\0") _T("1")) 
-	.Arg(XLL_DOUBLEX, _T("Num"), _T("is a number. "))
-	.Sort(_T("1"))  // before foo3
-	.Category(CATEGORY)
-	.FunctionHelp(_T("A function that does foo."))
-	.Documentation(
-	// e^{pi i} = -1
-		math(element()
-			._( _T("<markup><i>") _T("e") _T("</i></markup>") )
-			._(sup(_T("<markup><i>") ENT_pi _T("i") _T("</i></markup>")))
-			._(_T(" = -1"))
-		)
-		, // see also
-		element()
-		.content(xlink(_T("XLL.FOO3")))
-		.content(externalLink(_T("google"), _T("http://google.com/")))
-	)
-);
-double WINAPI
-xll_foo4(double num)
-{
-#pragma XLLEXPORT
-	XLL_ERROR("hi");
-
-	bool b;
-	b = xai_foo4.Arg().Sort() < xai_foo3.Arg().Sort();
-
-	return 2*num;
-}
-// macro documentation
 
 static AddInX xai_macro_doc(
 	MacroX(_T("?xll_macro_doc"), _T("MACRO.DOC"))
@@ -1050,8 +1053,8 @@ test_element(void)
 	t.attribute(_T("version"), _T("1.0"));
 	t.content(_T("An xml doc."));
 	std::basic_string<TCHAR> s;
-	s = t;
-	ensure (s == _T("<xml version=\"1.0\">An xml doc.</xml>\n"));
+	s = _T("<xml version=\"1.0\">An xml doc.</xml>\n");
+	ensure (t == s);
 
 	t.attribute(_T("level"), _T("3"));
 	s = t;
@@ -1062,15 +1065,18 @@ test_element(void)
 		.content(_T("An xml doc."));
 	ensure (s == _T("<xml version=\"2.0\">An xml doc.</xml>\n"));
 	s = element(_T("tag"));
-	ensure (s == _T("<tag />\n"));
+	ensure (s == _T("<tag />"));
 
 	element esc(_T("esc"));
-	esc.content(element::escape(_T("<>&\'\"")));
+	esc.content(element::escape(_T("<>&\'\"")).c_str());
 	s = esc;
 	ensure (s == _T("<esc>&lt;&gt;&amp;&apos;&quot;</esc>\n"));
 
 	s = element()
-		.content(element(_T("tag")).attribute(_T("attr"), _T("value")).content(_T("text")))
+		.content(element(_T("tag"))
+		.attribute(_T("attr"), _T("value"))
+		.content(_T("text")))
+		
 		;
 	ensure (s == _T("<tag attr=\"value\">text</tag>\n"));
 	s =		element(_T("html"))
@@ -1086,23 +1092,10 @@ test_element(void)
 				element(_T("body")).content(_T("B")));
 	ensure (s == _T("<head>H</head>\n<body>B</body>\n"));
 
-	element e(_T("tag"));
-	e._(_T("attr"), _T("val"));
-	e._(_T("attr2"), _T("val2"));
-	e._(_T("inner text"));
-	e._(_T("more text"));
-	ensure (0 == _tcscmp(e, _T("<tag attr=\"val\" attr2=\"val2\">inner textmore text</tag>\n")));
 
 	para p(_T("this is paragraph text"));
 	ensure (0 == _tcscmp(p , _T("<para>this is paragraph text</para>\n")));
 
-	typedef xml::element _;
-
-	math m; // e^{pi i} = -1
-	m._(var(_T("e")))
-	 ._( sup( _()._(ENT_pi)._(var(_T("i")))) )
-	 ._(_T(" = -1"));
-	s = m;
 }
 
 void
@@ -1177,7 +1170,7 @@ xll_hi_macro(void)
 	return 1;
 }
 // On<XXX> execute macro
-//static On<Key> xok_hi_macro(ON_CTRL ON_SHIFT "#", "HI.MACRO");
+static On<Key> xok_hi_macro(ON_CTRL ON_SHIFT _T("#"), _T("HI.MACRO"));
 
 int
 xll_test_eval()
@@ -1219,4 +1212,219 @@ xll_test_eval()
 
 	return 1;
 }
-static Auto<OpenAfter> xao_eval(xll_test_eval);
+//static Auto<OpenAfter> xao_eval(xll_test_eval);
+
+static AddInX xai_test_wizard(
+	_T("?xll_test_wizard"), XLL_LPOPERX XLL_LPOPERX XLL_LPOPERX XLL_UNCALCEDX,
+	_T("TEST.WIZARD"), _T("Type, BarId")
+);
+LPOPERX WINAPI
+xll_test_wizard(LPOPERX po, LPOPERX pid)
+{
+#pragma XLLEXPORT
+	static OPERX o;
+
+	o = ExcelX(xlfGetBar, *po, *pid);
+
+	return &o;
+}
+
+static AddInX xai_file_open(_T("?xll_file_open"), _T("FILEOPEN"));
+int WINAPI
+xll_file_open(void)
+{
+#pragma XLLEXPORT
+	OPERX o = ExcelX(xlfOpenDialog);
+	if (o) {
+		o = 0;
+	}
+
+	return 1;
+}
+
+// test xlAutoFree
+static AddInX xai_free(
+	_T("?xll_free"), XLL_LPOPERX XLL_SHORTX XLL_SHORTX, 
+	_T("XLL.FREE"), _T("Rows, Columns")
+);
+LPOPERX WINAPI
+xll_free(SHORT r, SHORT c)
+{
+#pragma XLLEXPORT
+
+	LPOPERX px = new OPERX(r,c);
+
+	(*px)(0,1) = OPERX(2, 3);
+	(*px)(0,1)(1,2) = OPERX(4,5);
+	px->xltype |= xlbitDLLFree; // Excel calls xlAutoFree when done using *px.
+
+	return px;
+}
+
+// Define names to show up in new sheets.
+static AddInX xai_define_foo(_T("?xll_define_foo"), _T("XLL.DEFINE.FOO"));
+int
+xll_define_foo(void)
+{
+#pragma XLLEXPORT
+	ExcelX(xlcDefineName, OPERX(_T("Foo")), OPERX(1.23));
+
+	return 1;
+}
+//static On<Sheet> xon_define_foo(_T(""), _T("XLL.DEFINE.FOO"));
+
+static AddInX xai_test_paste(
+	FunctionX(XLL_DOUBLEX, _T("?xll_test_paste"), _T("TEST.PASTE"))
+	.Arg(XLL_DOUBLEX, _T("Num?"), _T("is a number. "))
+	.Arg(XLL_CSTRINGX, _T("Str"), _T("is a string. "), _T("A string."))
+	.Arg(XLL_BOOLX, _T("Bool"), _T("is a boolean. "), true)
+	.Arg(XLL_DOUBLEX, _T("Form"), _T("is a formula"), _T("=Foo"))
+	.Category(CATEGORY)
+	.FunctionHelp(_T("Test XLL.PASTE.FUNCTION."))
+);
+double WINAPI
+xll_test_paste(double num, xcstr str, BOOL b, double y)
+{
+#pragma XLLEXPORT
+	num = num;
+	str = str;
+	b = b;
+	y = y;
+
+	return y;
+}
+
+
+
+
+
+static AddInX xai_threadsafe(
+	FunctionX(XLL_HANDLEX, _T("?xll_threadsafe"), _T("THREADSAFE"))
+	.ThreadSafe()
+);
+double WINAPI
+xll_threadsafe(void)
+{
+#pragma XLLEXPORT
+	OPERX o;
+
+	try {
+		o = Excel<XLOPERX>(xlfEvaluate, OPERX(_T("=2+3")));
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+
+	return o.val.num;
+}
+
+// Define names to show up in new sheets.
+int
+xll_return_type(void)
+{
+#pragma XLLEXPORT
+	xcstr rt = ArgType(xai_threadsafe.Args().Arg(0).Type());
+	xcstr at = ArgType(OPERX(XLL_HANDLEX));
+	ensure (OPERX(rt) == OPERX(at));
+
+	return 1;
+}
+static Auto<Open> xao_return_type(xll_return_type);
+
+static AddInX xai_what_am_i(
+	FunctionX(XLL_CSTRINGX, _T("?xll_what_am_i"), _T("WHAT.AM.I"))
+	.Arg(XLL_LPXLOPERX, _T("Arg"), _T("is an arbitrary argument"))
+);
+xcstr WINAPI xll_what_am_i(LPXLOPERX px)
+{
+#pragma XLLEXPORT
+	static xstring s;
+	std::basic_stringstream<xchar> ss;
+
+	OPERX o = XLL_XL_(Coerce, *px);
+
+	switch (o.xltype) {
+	case xltypeNum:
+		s = _T("I am a number");
+		break;
+	case xltypeStr:
+		s = _T("I am a string");
+		break;
+	case xltypeBool:
+		s = _T("I am a Boolean");
+		break;
+	case xltypeRef:
+		ss << _T("I am a reference to ") << o.val.mref.lpmref->count << _T(" ranges.");
+		break;
+	case xltypeErr:
+		s = _T("I am an error");
+		break;
+	case xltypeFlow:
+		s = _T("I am a flow that you will never see");
+		break;
+	case xltypeMulti:
+		ss << _T("I am a multi having ") << o.val.array.rows << _T(" rows and ") << o.val.array.columns << _T(" columns");
+		s = ss.str();
+		break;
+	case xltypeMissing:
+		s = _T("I am missing");
+		break;
+	case xltypeNil:
+		s = _T("I am nil, but you will never see me");
+		break;
+	case xltypeSRef:
+		s = _T("I am a simple reference");
+		break;
+	case xltypeInt:
+		s = _T("I am an int");
+		break;
+	default:
+		s = _T("I don't know what I am?!");
+	}
+
+	return s.c_str();
+}
+
+#include <wininet.h>
+#pragma comment(lib, "wininet.lib")
+
+HANDLE_DEFAULT_DELETE(HINTERNET, InternetCloseHandle)
+
+static AddInX xai_auto_open(_T("?xll_auto_open"), _T("OFN"));
+int WINAPI xll_auto_open(void)
+{
+#pragma XLLEXPORT
+	try {
+		std::unique_ptr<HINTERNET> pio(new HINTERNET(InternetOpen(_T("test-xll"), INTERNET_OPEN_TYPE_DIRECT, 0, 0, INTERNET_FLAG_ASYNC)));
+		UNIQUE_HANDLE(HINTERNET, pic, InternetConnect(*pio, _T("kal.webfactional.com"), INTERNET_DEFAULT_FTP_PORT, _T("kal"), _T("wo3deameh"), INTERNET_SERVICE_FTP, 0, 0)); 
+
+		TCHAR buf[1024];
+		DWORD nbuf(1024);
+		FtpGetCurrentDirectory(*pic, buf, &nbuf);
+
+		WIN32_FIND_DATA ffd;
+//		ZeroMemory(&ffd, sizeof(ffd));
+		std::unique_ptr<HINTERNET> pff(new HINTERNET(FtpFindFirstFile(*pic, 0, &ffd, INTERNET_FLAG_DONT_CACHE, 0)));
+		BOOL b;
+//		ZeroMemory(&ffd, sizeof(ffd));
+		b = InternetFindNextFile(*pff, &ffd);
+//		ZeroMemory(&ffd, sizeof(ffd));
+		b = InternetFindNextFile(*pff, &ffd);
+		while (InternetFindNextFile(*pff, &ffd)) {
+			LPCTSTR s;
+			s = ffd.cFileName;
+		}
+
+		OPERX o;
+		o = XLL_XLF(OpenDialog, OPERX(_T("(*.xll), *.xll")), OPERX(_T("File Open")));
+		//                                       ^ must have comma or call fails!!!
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+
+		return 0;
+	}
+
+	return 1;
+}
+//static Auto<Open> xao_auto_open(xll_auto_open);

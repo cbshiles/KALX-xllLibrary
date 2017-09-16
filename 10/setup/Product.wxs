@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define ProductVersion="1.0.135.0" ?>
+  <?define ProductVersion="3.2.27" ?>
   <Product Id="*"
            Name="xll"
            Language="1033"
@@ -31,8 +31,8 @@
 
     <Property Id='ARPCOMMENTS'>Library for creating Excel xll add-ins</Property>
     <Property Id='ARPCONTACT'>info@kalx.net</Property>
-    <Property Id='ARPHELPLINK'>http://nxll.codeplex.com</Property>
-    <Property Id='ARPURLINFOABOUT'>http://nxll.codeplex.com</Property>
+    <Property Id='ARPHELPLINK'>http://xll.codeplex.com</Property>
+    <Property Id='ARPURLINFOABOUT'>http://xll.codeplex.com</Property>
     <Property Id='ARPURLUPDATEINFO'>http://kalx.net/dnload/setup.zip</Property>
     <Property Id='ARPREADME'>appreadme</Property>
     <Property Id='ARPSIZE'>4</Property>
@@ -103,6 +103,7 @@
         <File Id="test.cpp" Source="$(var.xll.ProjectDir)..\test\test.cpp" ReadOnly="yes" />
         <File Id="howto.cpp" Source="$(var.xll.ProjectDir)..\test\howto.cpp" ReadOnly="yes" />
         <File Id="xml.cpp" Source="$(var.xll.ProjectDir)..\test\xml.cpp" ReadOnly="yes" />
+        <File Id="cred.cpp" Source="$(var.xll.ProjectDir)..\test\cred.cpp" ReadOnly="yes" />
       </Component>
     </DirectoryRef>
 

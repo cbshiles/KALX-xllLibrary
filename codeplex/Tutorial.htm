@@ -1,0 +1,19 @@
+!! Tutorial
+This tutorial provides step-by-step instructions to get you proficient with creating high performance production quality Excel add-ins. You will learn how to install the components you need, how to build add-ins and create beautiful documentation directly from the source code, and how to debug the code you write.
+
+!!! Installation
+The xll library has three components. The first component Contains the header files and library for creating Excel add-ins. The second component creates a new project template in Visual Studio 2010 for creating Excel add-in projects. The third component is Microsoft's HTML Help Workshop that can be used to produce nativley integrated Excel help files.
+
+# Installing the {{xll}} library: Open [url:setup.zip|http://kalx.net/dnload/setup.zip] and run {{setup.msi}}.
+# Installing the project template: Open [url:project.zip|http://kalx.net/dnload/project.zip] and run {{project.msi}}.
+# Installing help file generation: Go to [url:HTML Help Workshop|http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=21138] and install {{htmlhelp.exe}}.
+
+!!! New Project
+
+In any version of Visual Studio 2010 choose {{File|New>Project...}}, select {{Visual C++}}, and locate {{XLL Addin Project}} in the main window. You can change the {{Name}} and {{Location}}, or leave them as is, then click {{OK}}. 
+
+!!!! Build
+To build the project select {{Build|Build Solution}} or just press {{F7}}. The {{Output}} window should indicate the build succeeded.
+
+!!!! Debug
+Click to the left of any line In the souce file to set a break point. Select {{Debug|Start Debugging}} or just press {{F5}} to start Excel an load the add-in. Type {{XLL.FUNCTION(1)}} in a spreadsheet cell and press the Enter key. You should see Visual Studio show up with a yellow cursor pointing at the line with the breakpoint.

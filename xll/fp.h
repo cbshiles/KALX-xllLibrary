@@ -226,6 +226,10 @@ namespace xll {
 		{
 			realloc(r, c);
 		}
+		void resize(xword r, xword c)
+		{
+			realloc(r, c);
+		}
 		double operator[](xword i) const
 		{
 			return index(*this, i);
@@ -318,6 +322,8 @@ namespace xll {
 		{
 			if (!buf || size() != r*c) {
 				buf = (char*)::realloc(buf, sizeof(xfp) + r*c*sizeof(double));
+				if (!buf)
+					throw std::runtime_error("FP::realloc");
 				pf = reinterpret_cast<xfp*>(new (buf) xfp);
 			}
 			//!!! check size
@@ -341,6 +347,13 @@ namespace xll {
 	typedef XFP<XLOPER>   FP;
 	typedef XFP<XLOPER12> FP12;
 	typedef XFP<XLOPERX>  FPX;
+
+	// Excel SDK struct
+#ifdef EXCEL12
+	typedef _FP12 _FPX;
+#else
+	typedef _FP   _FPX;
+#endif
 
 } // namespace xll
 

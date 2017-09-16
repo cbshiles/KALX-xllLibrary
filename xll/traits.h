@@ -24,6 +24,8 @@ namespace xll {
 		typedef XLREF xlref;
 		typedef XLMREF xlmref;
 
+		typedef WORD xltype;
+
 		static const int strmax = 255; // maximum number of characters in a str
 
 		static int Excel(int xlfn, LPXLOPER operRes, int count, ...)
@@ -126,7 +128,9 @@ namespace xll {
 		typedef COL xcol;
 		typedef std::basic_string<xchar> xstring;
 		typedef XLREF12 xlref;
-		typedef XLMREF12 xlmref;
+		typedef XLMREF12 xlmref; 
+
+		typedef DWORD xltype;
 
 		static const int strmax = 32767;
 

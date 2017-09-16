@@ -1,0 +1,15 @@
+The installer is built in xll\build\setup\bin\<Configuation>\setup.msi
+
+Setup
+Set ProductVersion = y%10.m.d in Product.wxs
+Build xll v100 and v110 both Debug and Release
+
+Project
+Set VsVersion = 10 or 11 in Product.wxs and default.js before building.
+
+WiX Notes
+Generate list of source files to install:
+
+"C:\Program Files\Windows Installer XML v3.5\bin\Heat.exe" dir ..\..\xll -o .\XllFiles.wxs -dr INSTALLLOCATION -cg XllFiles -var var.xll.ProjectDir -g1 -gg -srd -sfrag
+
+Install to PF(x86) on 64 bit windows

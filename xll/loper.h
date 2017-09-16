@@ -6,18 +6,18 @@
 template <class X>
 struct LXOPER : public X {
 	LXOPER()
-		: owner(false)
+		: owner_(false)
 	{
 		xltype = xltypeNil;
 	}
 	LXOPER(const LXOPER& x_)
-		: owner(x_.owner)
+		: owner_(x_.owner_)
 	{
 		assign(rfree(x_));
 	}
 	// allows for explicit ownership
 	LXOPER(const X& x, bool own = false)
-		: owner(own)
+		: owner_(own)
 	{
 		assign(x);
 	}
@@ -25,7 +25,7 @@ struct LXOPER : public X {
 	{
 		if (this != &x_) {
 			lfree();
-			owner = x_.owner;
+			owner_ = x_.owner_;
 			assign(rfree(x_));
 		}
 
@@ -34,7 +34,7 @@ struct LXOPER : public X {
 	LXOPER& operator=(const X& x)
 	{
 		lfree();
-		owner = false; // x not an LXOPER
+		owner_ = false; // x not an LXOPER
 		assign(x);
 
 		return *this;
@@ -42,7 +42,7 @@ struct LXOPER : public X {
 	~LXOPER()
 	{
 		lfree();
-		owner = false;
+		owner_ = false;
 	}
 	operator double() const
 	{
@@ -66,10 +66,20 @@ struct LXOPER : public X {
 	}
 	X* XLFree(void)
 	{
-		if (owner)
+		if (owner_)
 			xltype |= xlbitXLFree;
 
+		owner_ = false;
+
 		return this;
+	}
+	X* xlfree(void)
+	{
+		return XLFree();
+	}
+	bool owner(void) const
+	{
+		return owner_;
 	}
 private:
 	void assign(const X& x)
@@ -80,23 +90,20 @@ private:
 	// l-value really gets freed
 	void lfree(void)
 	{
-		if (owner) {
+		if (owner_) {
 			xll::traits<X>::Excel(xlFree, 0, 1, this);
 		}
 	}
 	// r-value gets disowned
 	const LXOPER& rfree(const LXOPER& x_) const
 	{
-		if (x_.owner) {
-			x_.owner = false;
+		if (x_.owner_) {
+			x_.owner_ = false;
 		}
 
 		return x_;
 	}
-#ifdef _DEBUG
-public:
-#endif 
-	mutable bool owner;
+	mutable bool owner_;
 };
 
 typedef LXOPER<XLOPER>   LOPER, *LPLOPER;

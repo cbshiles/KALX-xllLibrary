@@ -22,6 +22,9 @@
     <Filter Include="CodePlex">
       <UniqueIdentifier>{018eec40-3a3c-42ff-855e-1ecfc307d68d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CodePlex\Tutorial">
+      <UniqueIdentifier>{2f389a47-9724-41e9-9bb1-aba1d3a9a62e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\xll\addin.h">
@@ -106,17 +109,41 @@
     <ClInclude Include="..\xll\utility\env.h">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\xll\on.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="winhttp.h">
-      <Filter>utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\xll\utility\strings.h">
       <Filter>utility</Filter>
     </ClInclude>
     <ClInclude Include="..\xll\maml\xml.h">
       <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\maml.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\on.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\cred.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\winhttp.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\nhandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\dropdown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\log.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\paste.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\timer.h">
+      <Filter>utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -136,7 +163,13 @@
       <Filter>maml</Filter>
     </ClCompile>
     <ClCompile Include="..\xll\XLCALL.CPP" />
-    <ClCompile Include="..\xll\on.cpp">
+    <ClCompile Include="..\xll\dropdown.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\paste.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\enum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -175,6 +208,9 @@
     </None>
     <None Include="..\codeplex\Developer.html">
       <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Tutorial.htm">
+      <Filter>CodePlex\Tutorial</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

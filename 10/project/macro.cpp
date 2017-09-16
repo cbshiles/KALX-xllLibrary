@@ -3,14 +3,25 @@
 #include "header.h"
 
 using namespace xll;
-
-static AddInX xai_macro(_T("?xll_macro"), _T("XLL.MACRO"));
+                        
+static AddInX xai_macro(
+	// C function name, Excel macro name
+	_T("?xll_macro"), _T("XLL.MACRO")
+);
 int WINAPI
 xll_macro(void)
 {
 #pragma XLLEXPORT
-	// macro body goes here
-	ExcelX(xlcAlert, OPERX(_T("Hello World!")));
+	try {
+		// macro body goes here
+		ExcelX(xlcAlert, OPERX(_T("Hello World!")));
+	}
+	catch (const std::exception& ex) {
+		// Use the macro ALERT.FILTER to control which alerts you see.
+		XLL_ERROR(ex.what()); // or XLL_WARNING or XLL_INFO
 
-	return 1; // or 0 on failure
+		return 0; // failure
+	}
+
+	return 1; // success
 }	

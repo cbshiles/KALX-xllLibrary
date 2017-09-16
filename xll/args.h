@@ -17,18 +17,26 @@ namespace xll {
 		ensure (type.val.str[0] > 0);
 
 		switch (type.val.str[1]) {
-			case _T('A') : return _T("Bool");
-			case _T('B') : return _T("Num");
-			case _T('C') : return _T("Str");
-			case _T('D') : return _T("Str");
-			case _T('E') : return _T("Num");
-			case _T('F') : return _T("Str");
-			case _T('G') : return _T("Str");
-			case _T('H') : return _T("Int");
+			case _T('A') : return _T("Boolean");
+			case _T('B') : {
+				if (type.val.str[0] > 1) {
+					if (type.val.str[2] == XLL_DATE[1]/*'1'*/)
+						return _T("Date");
+					if (type.val.str[2] == XLL_HANDLE[1]/*'2'*/)
+						return _T("Handle");
+				}
+				return _T("Number");
+			}
+			case _T('C') : return _T("String");
+			case _T('D') : return _T("String");
+			case _T('E') : return _T("Number");
+			case _T('F') : return _T("String");
+			case _T('G') : return _T("String");
+			case _T('H') : return _T("Integer");
 			case _T('I') : return _T("Short");
 			case _T('J') : return _T("Long");
 			case _T('K') : return _T("Array");
-			case _T('L') : return _T("Bool");
+			case _T('L') : return _T("Boolean");
 			case _T('M') : return _T("Short");
 			case _T('N') : return _T("Long");
 			case _T('P') : return _T("Range");
@@ -46,12 +54,15 @@ namespace xll {
 	// Single argument to Excel add-in.
 	template<class X>
 	class XArg {
-		XOPER<X> type_, name_, help_;
+		XOPER<X> type_, name_, help_, default_;
 	public:
 		typedef typename xll::traits<X>::xcstr xcstr;
 
 		XArg(xcstr type, xcstr name, xcstr help)
 			: type_(type), name_(name), help_(help)
+		{ }
+		XArg(xcstr type, xcstr name, xcstr help, const XOPER<X>& d)
+			: type_(type), name_(name), help_(help), default_(d)
 		{ }
 		const XOPER<X>& Type(void) const
 		{
@@ -65,6 +76,16 @@ namespace xll {
 		{
 			return help_;
 		}
+		const XOPER<X>& Default(void) const
+		{
+			return default_;
+		}
+		bool isDate(void) const {
+			return type_.val.str[0] > 1 && type_.val.str[1] == 'B' && type_.val.str[2] == XLL_DATE[1]/*'1'*/;
+		}
+		bool isHandle(void) const {
+			return type_.val.str[0] > 1 && type_.val.str[1] == 'B' && type_.val.str[2] == XLL_HANDLE[1]/*'2'*/;
+		}
 	};
 
 	typedef XArg<XLOPER>   Arg;
@@ -74,17 +95,35 @@ namespace xll {
 	// Build up arguments for call to xlfRegister.
 	template<class X>
 	class XArgs {
-		std::vector<XArg<X> > args_;
+		typedef typename xll::traits<X>::xcstr xcstr;
+		typedef typename xll::traits<X>::xchar xchar;
+		typedef typename xll::traits<X>::xword xword;
+		typedef typename xll::traits<X>::xstring xstring;
+
+		std::vector<XArg<X>> args_; // arg[0] is return value
 		mutable XOPER<X> arg_; // to be passed to xlfRegister
 		unsigned int tid_; // help file topic id
 		std::vector<XOPER<X> > alias_;
 		std::basic_string<typename traits<X>::xchar> doc_, related_;
 		XOPER<X> sort_; // sort key for documentation
-	public:
-		typedef typename xll::traits<X>::xcstr xcstr;
-		typedef typename xll::traits<X>::xchar xchar;
-		typedef typename xll::traits<X>::xword xword;
+		bool auth_;
 
+		// append to arg_[2]
+		void append(xcstr type)
+		{
+			xstring remove;
+			xstring arg2(type);
+
+			remove.resize(2);
+			remove[0] = XLL_DATE[1]; remove[1] = XLL_HANDLE[1];
+			// remove decorators
+			xstring::size_type i = 0;
+			while ((i = arg2.find_first_of(remove)) != xstring::npos)
+				arg2.erase(i, 1);
+
+			arg_[2].append(arg2.c_str());
+		}
+	public:
 		XArgs()
 			: tid_(0)
 		{
@@ -110,7 +149,7 @@ namespace xll {
 				: arg_(1, 10), tid_(0)
 		{
 			arg_[1] = procedure;
-			arg_[2] = type_text;
+			append(type_text);
 			arg_[3] = function_text;
 			arg_[4] = argument_text;
 			arg_[5] = 1; // function
@@ -118,16 +157,20 @@ namespace xll {
 				arg_[6] = category;
 			if (function_help)
 				arg_[9] = function_help;
+
+			args_.push_back(XArg<X>(type_text, function_text, function_help));
 		}
 		// return type, C name, Excel name
 		XArgs(xcstr type_text, xcstr procedure, xcstr function_text)
 			: arg_(1, 10), tid_(0)
 		{
 			arg_[1] = procedure;
-			arg_[2] = type_text;
+			append(type_text);
 			arg_[3] = function_text;
 			arg_[4] = traits<X>::null();
 			arg_[5] = 1; // function
+
+			args_.push_back(XArg<X>(type_text, function_text, traits<X>::null()));
 		}
 		/*
 		XArgs(const XArgs& arg)
@@ -149,11 +192,11 @@ namespace xll {
 		{
 		}
 		*/
-
-		bool isHiddenFunction(void) const
+		bool isHidden(void) const
 		{
 			return arg_[5] == 0;
 		}
+	
 		bool isFunction(void) const
 		{
 			return arg_[5] == 1;
@@ -166,6 +209,10 @@ namespace xll {
 		{
 			return arg_[5] == -1;
 		}
+		bool isDocumented(void) const
+		{
+			return doc_.size() != 0;
+		}
 		unsigned int TopicId(void) const
 		{
 			return tid_;
@@ -174,7 +221,7 @@ namespace xll {
 		// Tack on an argument
 		XArgs& Arg(xcstr type, xcstr name, xcstr help)
 		{
-			arg_[2].append(type);
+			append(type);
 
 			if (ArgumentText())
 				arg_[4].append(_T(", "));
@@ -186,6 +233,67 @@ namespace xll {
 
 			return *this;
 		}
+		// add a default value
+		template<class T>
+		XArgs& Arg(xcstr type, xcstr name, xcstr help, const T& t)
+		{
+			append(type);
+
+			if (ArgumentText())
+				arg_[4].append(_T(", "));
+			arg_[4].append(name);
+			
+			ArgumentHelp(help);
+
+			args_.push_back(XArg<X>(type, name, help, XOPER<X>(t)));
+
+			return *this;
+		}
+		XArgs& Volatile(void)
+		{
+			xchar c = XLL_VOLATILEX[0];
+			arg_[2].append(&c,1);
+
+			return *this;
+		}
+		XArgs& Uncalced(void)
+		{
+			xchar c = XLL_UNCALCEDX[0];
+			arg_[2].append(&c,1);
+
+			return *this;
+		}
+		XArgs& ThreadSafe(void)
+		{
+			if (typeid(X) == typeid(XLOPER12)) {
+				xchar c = XLL_THREAD_SAFEX[0];
+				arg_[2].append(&c, 1);
+			}
+
+			return *this;
+		}
+		XArgs& ClusterSafe(void)
+		{
+			if (typeid(X) == typeid(XLOPER12)) {
+				xchar c = XLL_CLUSTER_SAFE[0];
+				arg_[2].append(&c,1);
+			}
+
+			return *this;
+		}
+		XArgs& Asynchronous(void)
+		{
+			if (typeid(X) == typeid(XLOPER12)) {
+				xchar c = XLL_ASYNCHRONOUS[0];
+				arg_[2].append(&c,1);
+			}
+
+			return *this;
+		}
+		XArgs& Hide(void)
+		{
+			arg_[5] = 0;
+		}
 		xword ArgCount(void) const
 		{
 			return static_cast<xll::traits<X>::xword>(args_.size());
@@ -193,10 +301,9 @@ namespace xll {
 		// 1-based individual argument
 		const XArg<X>& Arg(xword i) const
 		{
-			ensure (i != 0);
-			ensure (i <= ArgCount());
+			ensure (i < ArgCount());
 
-			return args_[i - 1];
+			return args_[i];
 		}
 		//
 		// Accessors
@@ -227,14 +334,14 @@ namespace xll {
 		}
 		XArgs& TypeText(xcstr type_text)
 		{
-			arg_[2] = type_text;
+			append(type_text);
 
 			return *this;
 		
 		}
 		XArgs& TypeText(const X& type_text)
 		{
-			arg_[2] = type_text;
+			append(type_text);
 
 			return *this;
 		
@@ -366,10 +473,6 @@ namespace xll {
 			return *this;
 		}
 
-		xword ArgumentCount(void) const
-		{
-			return arg_.size() - 9;
-		}
 		// Individual help in the Function Wizard.
 
 		const XOPER<X>& ArgumentHelp(xword i) const
@@ -442,10 +545,22 @@ namespace xll {
 
 			return *this;
 		}
-		const std::vector< XOPER<X> >& Alias(void) const
+		const std::vector<XOPER<X>>& Alias(void) const
 		{
 			return alias_;
 		}
+		// create registry entry and reg file controlling access
+		XArgs& Authorize(void)
+		{
+			auth_ = true;
+//			LPCSTR module;
+//			module = XAddIn<X>::GetName();
+			// weak encription
+//			unsigned int value = hash(
+
+			return *this;
+		}
+
 		/*
 		XArgs& Sort(xcstr sort)
 		{
@@ -520,4 +635,5 @@ namespace xll {
 	typedef XArgs<XLOPER>   Document;
 	typedef XArgs<XLOPER12> Document12;
 	typedef X_(Args)        DocumentX;
+
 } // namespace xll

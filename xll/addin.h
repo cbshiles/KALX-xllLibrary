@@ -43,14 +43,14 @@ namespace xll {
 			List().push_back(this);
 		}
 
-		const XArgs<X>& Arg(void) const
+		const XArgs<X>& Args(void) const
 		{
 			return arg_; // arguments required to register the add-in
 		}
 
-		int RegisterId(void) const
+		double RegisterId(void) const
 		{
-			return static_cast<int>(regid_);
+			return regid_;
 		}
 		FARPROC GetProc(void) const
 		{
@@ -75,7 +75,7 @@ namespace xll {
 
 		static int RegisterAll()
 		{
-			addin_list l(List());
+			const addin_list& l(List());
 
 			for (addin_citer i = l.begin(); i != l.end(); ++i) {
 				if (!((*i)->Register()))
@@ -89,7 +89,7 @@ namespace xll {
 			const addin_list& l(List());
 
 			for (addin_citer i = l.begin(); i != l.end(); ++i) {
-				if (!((*i)->Arg().isDocument()))
+				if (!((*i)->Args().isDocument()))
 					if (!((*i)->Unregister()))
 						return 0;
 			}
@@ -97,18 +97,18 @@ namespace xll {
 			return 1;
 		}
 
+		static HMODULE GetModule(void)
+		{
+			static HMODULE module_(GetModuleHandleA(GetName()));
+
+			return module_;
+		}
 		static LPCSTR GetName(void)
 		{
 			static OPER oGetName(Excel<XLOPER>(xlGetName));
 			static std::string name_(oGetName.val.str + 1, oGetName.val.str[0]);
 
 			return name_.c_str();
-		}
-		static HMODULE GetModule(void)
-		{
-			static HMODULE module_(GetModuleHandle(GetName()));
-
-			return module_;
 		}
 		LPCSTR GetProc(void)
 		{
@@ -132,6 +132,33 @@ namespace xll {
 
 			return l_;
 		}
+
+		template<class P>
+		static const XAddIn<X>* Find(P pred)
+		{
+			const addin_list& l(List());
+
+			const XAddIn<X>::addin_citer pai = std::find_if(l.begin(), l.end(), pred);
+
+			return pai == l.end() ? 0 : *pai;
+		}
+
+		static const XAddIn<X>*
+		FindFunctionText(const XOPER<X>& text)
+		{
+			return Find([&text](const XAddIn<X>* i) -> bool { const XArgs<X>& a(i->Args()); return !a.isDocument() && a.FunctionText() == text; });
+		}
+		static const XAddIn<X>*
+		FindProcedure(const XOPER<X>& proc)
+		{
+			return Find([&proc](const XAddIn<X>* i) -> bool { const XArgs<X>& a(i->Args()); return !a.isDocument() && a.Procedure() == proc; });
+		}
+		static const XAddIn<X>*
+		FindRegisterId(double regid)
+		{
+			return Find([&regid](const XAddIn<X>* i) -> bool { const XArgs<X>& a(i->Args()); return !a.isDocument() && a.RegisterId() == regid; });
+		}
+
 	};
 
 	typedef XAddIn<XLOPER>   AddIn;

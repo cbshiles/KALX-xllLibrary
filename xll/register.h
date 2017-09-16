@@ -3,7 +3,7 @@
 #pragma once
 #include <map>
 #include <string>
-#include "args.h"
+#include "enum.h"
 
 namespace xll {
 
@@ -78,16 +78,16 @@ namespace xll {
 	{
 		XOPER<X> x(true);
 
-		if (arg.isMacro() || arg.isFunction() || arg.isHiddenFunction()) {
+		if (arg.isMacro() || arg.isFunction()) {
 			XArgs<X> a = arg;
 			if (i > 0) {
 				a.FunctionText(arg.Alias()[i - 1]);
 			}
 
 			int result = traits<X>::Excelv(xlfRegister, &x, a.size(), a.pointers());
-			ensure (x.xltype != xltypeStr && x.xltype != xltypeMulti); // this should never happen
+			ensure (xll::type(x) != xltypeStr && xll::type(x) != xltypeMulti); 
 
-			if (result != xlretSuccess || x.xltype == xltypeErr) {
+			if (result != xlretSuccess || xll::type(x) == xltypeErr) {
 				Excel<X>(xlcAlert
 					, Excel<X>(xlfConcatenate
 						, arg.Procedure()
@@ -97,7 +97,7 @@ namespace xll {
 			}
 			else {
 				// point at the real arg
-				ensure (x.xltype == xltypeNum);
+				ensure (xll::type(x) == xltypeNum);
 				XArgsMap<X>::Insert(x.val.num, &arg);
 			}
 
@@ -133,4 +133,12 @@ namespace xll {
 
 		return x;
 	}
+
+	template<class X>
+	class XRequire {
+	};
+
+	typedef XRequire<XLOPER>   Require;
+	typedef XRequire<XLOPER12> Require12;
+	typedef XRequire<XLOPERX>  RequireX;
 } // namespace xll
