@@ -1,10 +1,10 @@
 This is a library for creating xll add-in's for versions of Excel before
 and after Excel 2007.  It makes every feature of the Excel 2010 SDK
-available to you, including 64-bit builds.
+available to you, including 64-bit builds. (Not yet!)
 
 INSTALLATION
 
-Run xll.msi and project.msi from http://xll.codeplex.com.
+Run setup.msi and project.msi from http://xll.codeplex.com.
 
 OPERATION
 
@@ -25,3 +25,6 @@ before including "xll/xll.h" to create add-ins for the latest
 versions of Excel.  We use the same UNICODE conventions as
 Microsoft. http://msdn.microsoft.com/en-us/goglobal/bb688113.aspx
 
+TROUBLESHOOTING
+http://support.microsoft.com/default.aspx?scid=kb;en-us;Q280504
+http://support.microsoft.com/kb/948615

@@ -3,7 +3,7 @@
 #pragma once
 #include <map>
 #include <string>
-#include "xll/args.h"
+#include "args.h"
 
 namespace xll {
 
@@ -19,6 +19,7 @@ namespace xll {
 			return m_;
 		}
 
+		// Find by register id.
 		static const XArgs<X>* Find(double regid)
 		{
 			args_map& m(Map());
@@ -28,6 +29,20 @@ namespace xll {
 			return i == m.end() ? 0 : i->second;
 		}
 
+		// Find by name.
+		static const XArgs<X>* Find(const X& name)
+		{
+			args_map& m(Map());
+
+			args_map::const_iterator i;
+			
+			for (i = m.begin(); i != m.end(); ++i) 
+				if (i->second->FunctionText() == name)
+					return i->second;
+
+			return 0;
+		}
+
 		static void Insert(double regid, const XArgs<X>* pa)
 		{
 			Map().insert(std::make_pair(regid, pa));
@@ -35,36 +50,41 @@ namespace xll {
 	};
 	typedef XArgsMap<XLOPER>   ArgsMap;
 	typedef XArgsMap<XLOPER12> ArgsMap12;
-	typedef X_(ArgsMap)         ArgsMapX;
+	typedef X_(ArgsMap)        ArgsMapX;
 
 	// macro
 	template<class X>
-	inline OPERX AddInRegister(
+	inline OPERX Register(
 		typename xll::traits<X>::xcstr procedure, 
 		typename xll::traits<X>::xcstr function_text)
 	{
-		return AddInRegister<X>(XArgs<X>(procedure, function_text));
+		return Register<X>(XArgs<X>(procedure, function_text));
 	}
 
 	// function
 	template<class X>
-	inline XOPER<X> AddInRegister(
+	inline XOPER<X> Register(
 		typename xll::traits<X>::xcstr procedure, 
 		typename xll::traits<X>::xcstr type_text, 
 		typename xll::traits<X>::xcstr function_text, 
 		typename xll::traits<X>::xcstr argument_text)
 	{
-		return AddInRegister<X>(XArgs<X>(procedure, type_text, function_text, argument_text));
+		return Register<X>(XArgs<X>(procedure, type_text, function_text, argument_text));
 	}
 
 	// general case
 	template<class X>
-	inline XOPER<X> AddInRegister(const XArgs<X>& arg)
+	inline XOPER<X> Register(const XArgs<X>& arg, size_t i = 0)
 	{
 		XOPER<X> x(true);
 
-		if (arg.isMacro() || arg.isFunction()) {
-			int result = traits<X>::Excelv(xlfRegister, &x, arg.size(), arg.pointers());
+		if (arg.isMacro() || arg.isFunction() || arg.isHiddenFunction()) {
+			XArgs<X> a = arg;
+			if (i > 0) {
+				a.FunctionText(arg.Alias()[i - 1]);
+			}
+
+			int result = traits<X>::Excelv(xlfRegister, &x, a.size(), a.pointers());
 			ensure (x.xltype != xltypeStr && x.xltype != xltypeMulti); // this should never happen
 
 			if (result != xlretSuccess || x.xltype == xltypeErr) {
@@ -76,16 +96,23 @@ namespace xll {
 				);
 			}
 			else {
+				// point at the real arg
 				ensure (x.xltype == xltypeNum);
 				XArgsMap<X>::Insert(x.val.num, &arg);
 			}
+
+			if (i == 0 && arg.Alias().size() > 0) {
+				for (size_t i = 1; i <= arg.Alias().size(); ++i)
+					Register(arg, i);
+			}
+
 		}
 
 		return x;
 	}
 
 	template<class X>
-	inline XOPER<X> AddInUnregister(const XArgs<X>& arg)
+	inline XOPER<X> Unregister(const XArgs<X>& arg)
 	{
 		XOPER<X> x;
 
@@ -93,7 +120,7 @@ namespace xll {
 			x = Excel<X>(xlfUnregister, Excel<X>(xlfRegisterId, Excel<X>(xlGetName), arg.Procedure()));
 
 			// Workaround for name not disappearing from paste function dialog.
-			AddInRegister<X>(XArgs<X>(arg).MacroType(0)); // hidden
+			Register<X>(XArgs<X>(arg).MacroType(0)); // hidden
 		}
 		catch (const std::exception&) {
 			Excel<X>(xlcAlert

@@ -105,35 +105,41 @@ function AddConfig(proj, strProjectName) {
 		var path;
 		var excel;
 		try {
-			path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\12.0\\Excel\\InstallRoot\\Path";
+			path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\14.0\\Excel\\InstallRoot\\Path";
 			excel = shell.RegRead(path);
 		}
-		catch (e) {
-			try {
-				path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\11.0\\Excel\\InstallRoot\\Path";
-				excel = shell.RegRead(path);
-			}
-			catch (e) {
-				try {
-					path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\10.0\\Excel\\InstallRoot\\Path";
-					excel = shell.RegRead(path);
-				}
-				catch (e) {
-					try {
-						path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\9.0\\Excel\\InstallRoot\\Path";
-						excel = shell.RegRead(path);
-					}
-					catch (e) {
-						try {
-							path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\8.0\\Excel\\InstallRoot\\Path";
-							excel = shell.RegRead(path);
-						}
-						catch (e) {
-							excel = ""; // warn???
-						}
-					}
-				}
-			}
+        catch (e) {
+            try {
+                path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\12.0\\Excel\\InstallRoot\\Path";
+                excel = shell.RegRead(path);
+            }
+            catch (e) {
+                try {
+                    path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\11.0\\Excel\\InstallRoot\\Path";
+                    excel = shell.RegRead(path);
+                }
+                catch (e) {
+                    try {
+                        path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\10.0\\Excel\\InstallRoot\\Path";
+                        excel = shell.RegRead(path);
+                    }
+                    catch (e) {
+                        try {
+                            path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\9.0\\Excel\\InstallRoot\\Path";
+                            excel = shell.RegRead(path);
+                        }
+                        catch (e) {
+                            try {
+                                path = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Office\\8.0\\Excel\\InstallRoot\\Path";
+                                excel = shell.RegRead(path);
+                            }
+                            catch (e) {
+                                excel = ""; // warn???
+                            }
+                        }
+                    }
+                }
+            }
 		}
 
         config = proj.Object.Configurations('Debug');

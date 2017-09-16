@@ -1,32 +1,31 @@
 // loper.h - XLOPER with memory handled by Excel
 // Copyright (c) 2011 KALX, LLC. All rights reserved. No warranty is made.
-#include "xll/fp.h"
+#include "traits.h"
 
 // LOPER o = Excel(xlfSomething, NumX(x), StrX(s), ...);
 template <class X>
 struct LXOPER : public X {
-	typedef typename xll::traits<X>::xword xword;
-
 	LXOPER()
+		: owner(false)
 	{
 		xltype = xltypeNil;
-		own(true); // so LXOPER x; Excel4(fun, &x, ...); works right
 	}
 	LXOPER(const LXOPER& x_)
+		: owner(x_.owner)
 	{
-		own(x_.owner);
 		assign(rfree(x_));
 	}
-	LXOPER(const X& x)
+	// allows for explicit ownership
+	LXOPER(const X& x, bool own = false)
+		: owner(own)
 	{
-		own(false);
 		assign(x);
 	}
 	LXOPER& operator=(const LXOPER& x_)
 	{
 		if (this != &x_) {
 			lfree();
-			own(x_.owner);
+			owner = x_.owner;
 			assign(rfree(x_));
 		}
 
@@ -35,7 +34,7 @@ struct LXOPER : public X {
 	LXOPER& operator=(const X& x)
 	{
 		lfree();
-		own(false);
+		owner = false; // x not an LXOPER
 		assign(x);
 
 		return *this;
@@ -43,18 +42,19 @@ struct LXOPER : public X {
 	~LXOPER()
 	{
 		lfree();
+		owner = false;
 	}
 	operator double() const
 	{
-		return to_number(*this);
+		return xll::to_number<X>(*this);
 	}
-	const X& operator[](xword i) const
+	const X& operator[](typename xll::traits<X>::xword i) const
 	{
-		return xll::Index<X>(*this, i);
+		return xll::index<X>(*this, i);
 	}
-	const X& operator()(xword i, xword j) const
+	const X& operator()(typename xll::traits<X>::xword i, typename xll::traits<X>::xword j) const
 	{
-		return xll::Index<X>(*this, i, j);
+		return xll::index<X>(*this, i, j);
 	}
 	X* operator&()
 	{
@@ -71,25 +71,7 @@ struct LXOPER : public X {
 
 		return this;
 	}
-	// total number of LOPERs that need to be freed
-	static int count(void)
-	{
-		return owned();
-	}
 private:
-	static int owned(int incr = 0)
-	{
-		static int owned_(0);
-
-		owned_ += incr;
-
-		return owned_;
-	}
-	void own(bool b) const
-	{
-		owner = b;
-		owned(b);
-	}
 	void assign(const X& x)
 	{
 		xltype = x.xltype;
@@ -99,20 +81,21 @@ private:
 	void lfree(void)
 	{
 		if (owner) {
-			owned(-1);
-			xll::traits<XLOPERX>::Excel(xlFree, 0, 1, this);
+			xll::traits<X>::Excel(xlFree, 0, 1, this);
 		}
 	}
-	// r-value gets count decremented
+	// r-value gets disowned
 	const LXOPER& rfree(const LXOPER& x_) const
 	{
 		if (x_.owner) {
-			owned(-1);
 			x_.owner = false;
 		}
 
 		return x_;
 	}
+#ifdef _DEBUG
+public:
+#endif 
 	mutable bool owner;
 };
 

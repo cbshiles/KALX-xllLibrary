@@ -1,7 +1,8 @@
 #pragma warning(disable: 4996)
+#include "error.h"
 #include "addin.h"
 #include "dialog.h"
-#include "xll/registry.h"
+#include "utility/registry.h"
 
 using namespace xll;
 
@@ -40,9 +41,8 @@ XLL_INFORMATION(const char* e, bool force)
 	return XLL_ALERT(e, "Information", XLL_ALERT_INFO, MB_ICONINFORMATION, force);
 }
 
-// pop up dialog for error handling???
-static AddIn xai_alert_filter("_xll_alert_filter@0", "SHOW.ALERTS");
-extern "C" void __declspec(dllexport) WINAPI
+static AddIn xai_alert_filter("_xll_alert_filter@0", "ALERT.FILTER");
+extern "C" int __declspec(dllexport) WINAPI
 xll_alert_filter(void)
 {
     int w = 230, h = 90, b = 10;
@@ -78,4 +78,6 @@ xll_alert_filter(void)
         else
             xll_alert_level &= ~XLL_ALERT_INFO;
     }
+
+	return 1;
 }

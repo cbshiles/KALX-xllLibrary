@@ -1,7 +1,7 @@
 // defines.h - Excel definitions
 // Copyright (c) 2011 KALX, LLC. All rights reserved. No warranty is made.
 #pragma once
-#include "xll/ensure.h"
+#include "utility/ensure.h"
 
 #ifdef EXCEL12
 
@@ -31,13 +31,19 @@
 #pragma warning(disable: 4996)
 #include <windows.h>
 #include <tchar.h>
-#include "ensure.h"
 
 extern "C" {
-#include "xll/xlcall.h"
+#include "XLCALL.H"
 }
 // xlAuto* functions
-#include "xll/auto.h"
+#include "auto.h"
+
+// don't use typedef
+#ifdef EXCEL12
+#define XLOPERX XLOPER12
+#else
+#define XLOPERX XLOPER
+#endif
 
 #define dimof(x) ((sizeof(x))/(sizeof(*x)))
 
@@ -49,14 +55,22 @@ extern "C" {
 
 // Enumerated type XLL_ENUM(C_VALUE, ExcelName, _T("Category"), _T("Description"))
 #define XLL_ENUM(value, name, cat, desc) static xll::AddInX xai_##name(   \
-    _T(XLL_STRZ_(_xll_##name##@0)), XLL_LPXLOPERX, _T(#name), _T(""), cat, desc _T(" ")); \
+    _T(XLL_STRZ_(_xll_##name##@0)), XLL_LPOPERX, _T(#name), _T(""), cat, desc _T(" ")); \
     extern "C" __declspec(dllexport) LPOPERX WINAPI xll_##name(void)      \
 	{ static OPERX o(value); return &o; }
 
 #define XLL_ENUM_DOC(value, name, cat, desc, doc) static xll::AddInX xai_##name(   \
-    FunctionX(XLL_LPXLOPERX, _T(XLL_STRZ_(_xll_##name##@0)), _T(#name)) \
+    FunctionX(XLL_LPOPERX, _T(XLL_STRZ_(_xll_##name##@0)), _T(#name)) \
 	.Category(cat).FunctionHelp(desc _T(" ")) \
 	.Documentation(doc)); \
+    extern "C" __declspec(dllexport) LPOPERX WINAPI xll_##name(void)      \
+	{ static OPERX o(value); return &o; }
+
+#define XLL_ENUM_SORT(group, value, name, cat, desc, doc) static xll::AddInX xai_##name(   \
+    FunctionX(XLL_LPOPERX, _T(XLL_STRZ_(_xll_##name##@0)), _T(#name)) \
+	.Category(cat).FunctionHelp(desc _T(" ")) \
+	.Documentation(doc) \
+	.Sort(_T(#group), OPERX(value))); \
     extern "C" __declspec(dllexport) LPOPERX WINAPI xll_##name(void)      \
 	{ static OPERX o(value); return &o; }
 
@@ -69,10 +83,10 @@ extern "C" {
 #define TX_(s) s
 #endif
 
-#define L_(s) L#s
+//#define L_(s) L#s
 
 // Evaluates to XLOPER or XLOPER12 depending on EXCEL12 being undefined or defined
-typedef X_(XLOPER) XLOPERX, *LPXLOPERX;
+typedef X_(XLOPER) *LPXLOPERX;
 
 // Excel C data types for xlfRegister/AddIn.
 #define XLL_BOOL     "A"  // short int used as logical
@@ -95,8 +109,9 @@ typedef X_(XLOPER) XLOPERX, *LPXLOPERX;
 // Modify add-in function behaviour.
 #define XLL_VOLATILE "!"  // called every time sheet is recalced
 #define XLL_UNCALCED "#"  // dereferencing uncalced cells returns old value
-#define XLL_THREAD_SAFE ""  // does not apply to versions <12.
-#define XLL_CLUSTER_SAFE ""	// does not apply to versions <12.
+#define XLL_VOID ">"	// in-place function.
+ 
+ 
 
 // Extensions
 //#define XLL_HANDLE XLL_DOUBLE
@@ -123,6 +138,8 @@ typedef X_(XLOPER) XLOPERX, *LPXLOPERX;
 #define XLL_UNCALCED12 L"#"  // dereferencing uncalced cells returns old value
 #define XLL_THREAD_SAFE12 L"$" // declares function to be thread safe
 #define XLL_CLUSTER_SAFE12 L"&"	// declares function to be cluster safe
+#define XLL_ASYNCHRONOUS12 L"X"	// declases function to be asynchronous
+#define XLL_VOID12     L">"	// return type to use for asynchronous functions
 
 //#define XLL_HANDLE12 XLL_DOUBLE12
 
@@ -148,6 +165,7 @@ typedef X_(XLOPER) XLOPERX, *LPXLOPERX;
 #define XLL_UNCALCEDX XLL_UNCALCED12
 #define XLL_THREAD_SAFEX XLL_THREAD_SAFE12
 #define XLL_CLUSTER_SAFEX XLL_CLUSTER_SAFE12
+#define XLL_VOIDX XLL_VOID12
 
 //#define XLL_HANDLEX   XLL_HANDLE12
 
@@ -173,6 +191,7 @@ typedef X_(XLOPER) XLOPERX, *LPXLOPERX;
 #define XLL_UNCALCEDX XLL_UNCALCED
 #define XLL_THREAD_SAFEX XLL_THREAD_SAFE
 #define XLL_CLUSTER_SAFEX XLL_CLUSTER_SAFE
+#define XLL_VOIDX XLL_VOID
 
 //#define XLL_HANDLEX   XLL_HANDLE
 

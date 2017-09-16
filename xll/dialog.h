@@ -1,7 +1,6 @@
 // dialog.h - Construct dialog boxes
 // Copyright (c) 2006-2011 KALX, LLC. All rights reserved. No warranty is made.
 #pragma once
-#include "xll/oper.h"
 
 namespace xll {
 	template<class X>

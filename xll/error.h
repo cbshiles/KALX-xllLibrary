@@ -1,9 +1,6 @@
 // error.h - Error reporting functions
 // Copyright (c) 2005-2011 KALX, LLC. All rights reserved.
 #pragma once
-//#define NOMINMAX
-//#include <windows.h>
-#include "xll/traits.h"
 
 // error reporting macros
 #ifndef _LIB

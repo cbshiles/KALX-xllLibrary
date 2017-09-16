@@ -1,3 +1,5 @@
+The installer is built in nxll\10\setup\bin\<Configuation>\setup.msi
+
 Generate list of source files to install:
 
-"C:\Program Files\Windows Installer XML v3.5\bin\Heat.exe" dir ..\..\xll -o .\XllFiles.wsx -dr WIXUI_INSTALLDIR -cg XllFiles -var var.XllSourceFolder -g1 -gg -srd -sfrag
+"C:\Program Files\Windows Installer XML v3.5\bin\Heat.exe" dir ..\..\xll -o .\XllFiles.wxs -dr INSTALLLOCATION -cg XllFiles -var var.xll.ProjectDir -g1 -gg -srd -sfrag

@@ -9,7 +9,7 @@ struct CrtDbg {
 	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF)
 	{
 		_CrtSetDbgFlag (_CrtSetDbgFlag( _CRTDBG_REPORT_FLAG )|flags);
-//		_crtBreakAlloc = 154;
+//		_crtBreakAlloc = 2730; // {2723} normal block at 0xX, y bytes long.
 	}
 	// When information about a memory block is reported by one of the debug 
 	// dump functions, this number is enclosed in braces, such as {36}.

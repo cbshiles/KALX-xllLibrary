@@ -3,17 +3,27 @@
 #pragma once
 #include <cstdlib>
 #include <limits>
-#include "xll/xloper.h"
+#include "xloper.h"
 
 // In the global namespace, just like XLOPER.
 template<class X>
 class XOPER : public X {
-	typedef typename xll::traits<X>::xword xword;
-	typedef typename xll::traits<X>::xcstr xcstr;
+public:
+
+	typedef XOPER value_type;
+	typedef value_type* pointer;		
+	typedef const value_type* const_pointer;		
+	typedef value_type& reference;		
+	typedef const value_type& const_reference;		
+	typedef typename xll::traits<X>::xword size_type;
+	typedef std::ptrdiff_t difference_type;
+
 	typedef typename xll::traits<X>::xchar xchar;
+	typedef typename xll::traits<X>::xcstr xcstr;
+	typedef typename xll::traits<X>::xword xword;
 	typedef typename xll::traits<X>::xrw xrw;
 	typedef typename xll::traits<X>::xcol xcol;
-public:
+
 	XOPER()
 	{ 
 		xltype = xltypeNil;
@@ -26,27 +36,6 @@ public:
 	{
 		construct(x);
 	}
-private:
-	void construct(const X& x)
-	{
-		if (x.xltype == xltypeStr) {
-			alloc(x.val.str + 1, x.val.str[0]);
-		}
-		else if (x.xltype == xltypeMulti) {
-			xltype = xltypeMulti;
-			val.array.rows = 0;
-			val.array.columns = 0;
-			val.array.lparray = 0;
-
-			realloc(x.val.array.rows, x.val.array.columns, x.val.array.lparray);
-		}
-		else {
-			xltype = x.xltype;
-			val = x.val;
-		}
-	}
-
-public:
 	XOPER& operator=(const X& x)
 	{
 		return assign(x);
@@ -55,33 +44,6 @@ public:
 	{
 		return assign(x);
 	}
-private:
-	XOPER& assign(const X& x)
-	{
-		if (this != &x) {
-			if (x.xltype == xltypeStr) {
-				free();
-				alloc(x.val.str + 1, x.val.str[0]);
-			}
-			else if (x.xltype == xltypeMulti) {
-				free();
-				xltype = xltypeMulti;
-				val.array.rows = 0;
-				val.array.columns = 0;
-				val.array.lparray = 0;
-
-				realloc(x.val.array.rows, x.val.array.columns, x.val.array.lparray);
-			}
-			else {
-				xltype = x.xltype;
-				val = x.val;
-			}
-		}
-
-		return *this;
-	}
-
-public:
 	~XOPER()
 	{
 		free();
@@ -124,7 +86,7 @@ public:
 	// This may or may not be the right thing to do.
 	operator double() const
 	{
-		return xll::to_number(*this);
+		return xll::to_number<X>(*this);
 	}
 	XOPER& operator=(double num)
 	{
@@ -139,60 +101,65 @@ public:
 	XOPER_EQ(short)
 	XOPER_EQ(unsigned short)
 	XOPER_EQ(int)
-	XOPER_EQ(size_t) // unsigned in causes warnings
+	XOPER_EQ(size_t) // unsigned int causes warnings
 	XOPER_EQ(long)
 	XOPER_EQ(unsigned long)
 #undef  XOPER_EQ
 
-	bool operator==(double num)
-	{
-		return (xltype == xltypeNum && val.num == num) || xltype == xltypeInt && val.w == num ;
-	}
-#define XOPER_EQU(T) bool operator==(T num) { return (xltype == xltypeNum && val.num == num) || xltype == xltypeInt && num == static_cast<T>(val.w) ; }
+#define XOPER_EQU(T) bool operator==(T num) {        \
+	return ((xltype == xltypeNum) && val.num == num) \
+	|| ((xltype == xltypeInt) && val.w == num)       \
+	|| ((xltype == xltypeMulti) && size() == 1 && val.array.lparray[0].xltype == xltypeNum && val.array.lparray[0].val.num == num); }
 	//XOPER_EQU(short)
-	//XOPER_EQU(unsigned short)
+	XOPER_EQU(unsigned short)
+	XOPER_EQU(double)
 	XOPER_EQU(int)
 	XOPER_EQU(size_t)
-	//XOPER_EQU(long)
+/*	bool operator==(xword w)
+	{
+		return operator==(static_cast<double>(w));
+	}
+*/	//XOPER_EQU(xword)
 	//XOPER_EQU(unsigned long)
 #undef  XOPER_EQU
 
 	// xltypeStr
 	XOPER(xcstr str)
 	{
-		size_t len = xll::traits<X>::strlen(str);
+		xltype = xltypeStr;
+		val.str = 0;
 
-		ensure (len <= traits<X>::strmax);
-		
-		alloc(str, static_cast<xchar>(len));
+		realloc(str, xll::traits<X>::strlen(str));
 	}
 	// Use as XOPER(s + 1, s[0]) for counted strings.
 	XOPER(xcstr str, xchar len)
 	{
-		alloc(str, len);
+		xltype = xltypeStr;
+		val.str = 0;
+
+		realloc(str, len);
 	}
 	XOPER& operator=(xcstr str)
 	{
-		size_t len = xll::traits<X>::strlen(str);
-
-		ensure (len <= traits<X>::strmax);
-
 		free();
-		alloc(str, static_cast<xchar>(len));
+		xltype = xltypeStr;
+		val.str = 0;
+
+		realloc(str, xll::traits<X>::strlen(str));
 
 		return *this;
 	}
 	bool operator==(xcstr str)
 	{
 		return xltype == xltypeStr
-			&& val.str[0] == xll::traits<X>::strlen(str); /*
+			&& val.str[0] == xll::traits<X>::strlen(str)
 			&& 0 == xll::traits<X>::strnicmp(str, val.str + 1, val.str[0]);
-			*/
 	}
 	XOPER& append(xcstr str, xchar len = 0)
 	{
 		if (len == 0)
-			len = static_cast<xll::traits<X>::xchar>(xll::traits<X>::strlen(str));
+			len = xll::traits<X>::strlen(str);
+
 		if (len > 0) {
 			ensure (xltype == xltypeStr);
 			val.str = static_cast<xll::traits<X>::xchar*>(::realloc(val.str, (val.str[0] + len + 1)*sizeof(xchar)));
@@ -202,16 +169,7 @@ public:
 
 		return *this;
 	}
-private:
-	void alloc(xcstr str, xchar count)
-	{
-		xltype = xltypeStr;
-		val.str = static_cast<xll::traits<X>::xchar*>(malloc((count + 1)*sizeof(xchar)));
-		val.str[0] = count;
-		xll::traits<X>::strncpy(val.str + 1, str, count);
-	}
 
-public:
 	// xltypeBool
 	explicit XOPER(bool xbool)
 	{
@@ -254,12 +212,12 @@ public:
 	{
 		return xll::columns<X>(*this);
 	}
-	size_t size(void) const
+	xword size(void) const
 	{
 		return xll::size<X>(*this);
 	}
 
-	XOPER& resize(size_t r, size_t c)
+	XOPER& resize(xword r, xword c)
 	{
 		if (xltype != xltypeMulti) {
 			XOPER tmp = *this;
@@ -279,11 +237,11 @@ public:
 
 		return *this;
 	}
-	XOPER& operator[](size_t i)
+	XOPER& operator[](xword i)
 	{
 		return static_cast<XOPER&>(xll::index<X>(*this, i));
 	}
-	const XOPER& operator[](size_t i) const
+	const XOPER& operator[](xword i) const
 	{
 		return static_cast<const XOPER&>(xll::index<X>(*this, i));
 	}
@@ -295,6 +253,8 @@ public:
 	{
 		return static_cast<const XOPER&>(xll::index<X>(*this, i, j));
 	}
+
+	// STL friendly
 	XOPER* begin(void)
 	{
 		return static_cast<XOPER*>(xll::begin<X>(*this));
@@ -313,11 +273,11 @@ public:
 	}
 	void push_back(const X& x)
 	{
-		if (xltype == OPER().xltype) {
+		if (!size()) {
 			operator=(x);
 		}
 		else {
-			size_t n = size();
+			xword n = size();
 
 			if (columns() == xll::columns(x)) {
 				resize(rows() + xll::rows(x), columns());
@@ -326,11 +286,11 @@ public:
 				ensure (rows() == 1);
 				resize(1, n + xll::size(x));
 			}
-			for (size_t i = 0; i < xll::size(x); ++i)
+			for (xword i = 0; i < xll::size(x); ++i)
 				operator[](n + i) = xll::index(x, i);
 		}
 	}
-	void pop_back(size_t n = 1)
+	void pop_back(xword n = 1)
 	{
 		if (rows() == 1) {
 			ensure (n <= columns());
@@ -358,49 +318,143 @@ public:
 	
 	// xltypeInt - use XInt<X> if needed
 
-private:
-	// reallocate and initialize if pa is not null
-	void realloc(size_t r, size_t c, const X* pa = 0, size_t na = 0)
+	// xltypeBigData
+	XOPER(long cbData, void* lpbData)
 	{
-		ensure (r <= xll::limits<X>::maxrows);
-		ensure (c <= xll::limits<X>::maxcols);
+		xltype = xltypeBigData;
+		val.bigdata.h.lpbData = 0;
 
-		// assumes 'this' is in good order
-		ensure (xltype == xltypeMulti);
-
-		size_t n = size();
-
-		val.array.rows = static_cast<xword>(r);
-		val.array.columns = static_cast<xword>(c);
-		// works even if r*c == 0
-		if (n != size())
-			val.array.lparray = static_cast<X*>(::realloc(val.array.lparray, r*c*sizeof(X)));
-
-		if (pa) {
-			for (size_t i = 0; i < (na ? na : size()); ++i)
-				operator[](i) = static_cast<const XOPER<X>&>(pa[i]);
-		}
-		else {
-			for (size_t i = n; i < size(); ++i)
-				operator[](i) = XOPER();
-		}
+		realloc(cbData, lpbData);
 	}
 
 private:
+	void construct(const X& x)
+	{
+		// ensure (x.xltype & (xltypeNum|...));
+		if (x.xltype == xltypeStr) {
+			xltype = xltypeStr;
+			val.str = 0;
+
+			realloc(x.val.str + 1, x.val.str[0]);
+		}
+		else if (x.xltype == xltypeMulti) {
+			xltype = xltypeMulti;
+			val.array.rows = 0;
+			val.array.columns = 0;
+			val.array.lparray = 0;
+
+			realloc(x.val.array.rows, x.val.array.columns, x.val.array.lparray);
+		}
+		else if (x.xltype == xltypeBigData) {
+			xltype = xltypeBigData;
+			val.bigdata.h.lpbData = 0;
+
+			realloc(x.val.bigdata.cbData, x.val.bigdata.h.lpbData);
+		}
+		else {
+			xltype = x.xltype;
+			val = x.val;
+		}
+	}
+
+	XOPER& assign(const X& x)
+	{
+		if (this != &x) {
+			free();
+			construct(x);
+		}
+
+		return *this;
+	}
+
+	void realloc(xcstr str, xchar count)
+	{
+		ensure (xltype == xltypeStr);
+
+		ensure (0 != (val.str = static_cast<xll::traits<X>::xchar*>(::realloc(val.str, (count + 1)*sizeof(xchar)))));
+		val.str[0] = count;
+		if (count)
+			xll::traits<X>::strncpy(val.str + 1, str, count);
+	}
+
+	// reallocate and initialize if pa is not null
+	void realloc(xword r, xword c, const X* pa = 0, xword na = 0)
+	{
+		if (r*c == 0) {
+			free();
+
+			return;
+		}
+		ensure (r <= xll::limits<X>::maxrows);
+		ensure (c <= xll::limits<X>::maxcols);
+		ensure (xltype == xltypeMulti);
+
+		xword n = size();
+		// free existing OPERs
+		for (xword i = r*c; i < n; ++i)
+			operator[](i).free();
+
+		val.array.rows = r;
+		val.array.columns = c;
+
+		if (n != size())
+			ensure (0 != (val.array.lparray = static_cast<X*>(::realloc(val.array.lparray, r*c*sizeof(X)))));
+
+		// intitialize new OPERs
+		for (xword i = n; i < size(); ++i)
+			val.array.lparray[i].xltype = xltypeNil;
+
+		if (pa) {
+			ensure (na <= size());
+
+			if (na == 0)
+				na = size();
+
+			for (xword i = 0; i < na; ++i)
+				operator[](i) = pa[i];
+		}
+	}
+	void realloc(long cbData, void* lpbData)
+	{
+		ensure (xltype == xltypeBigData);
+
+		val.bigdata.cbData = cbData;
+		if (cbData) {
+			ensure (0 != (val.bigdata.h.lpbData = static_cast<BYTE*>(::realloc(val.bigdata.h.lpbData, cbData))));
+			memcpy(val.bigdata.h.lpbData, lpbData, cbData);
+		}
+		else { // Excel handle
+			val.bigdata.h.hdata = lpbData;
+		}
+	}
+
 	void free()
 	{
 		switch (xltype) {
 		case xltypeStr:
 			::free(val.str);
+			val.str = 0;
 
 			break;
 		case xltypeMulti:
-			for (size_t i = 0; i < size(); ++i)
+			for (xword i = 0; i < size(); ++i)
 				operator[](i).free(); // need to call explicitly
 			::free(val.array.lparray);
+			val.array.rows = 0;
+			val.array.columns = 0;
+			val.array.lparray = 0;
+
+			break;
+		case xltypeBigData:
+			if (val.bigdata.cbData)
+				::free(val.bigdata.h.lpbData);
+			val.bigdata.cbData = 0;
+			val.bigdata.h.lpbData = 0;
 
 			break;
 		}
+
+		xltype = xltypeMissing; // just like xlFree
 	}
 };
 
@@ -427,8 +481,6 @@ typedef X_(Num)        NumX;
 
 template<class X>
 struct XStr : public OPERX {
-	typedef typename xll::traits<X>::xcstr xcstr;
-	typedef typename xll::traits<X>::xchar xchar;
 	explicit XStr(xcstr str = xll::traits<X>::null())
 		: OPERX(str)
 	{ }
@@ -444,7 +496,7 @@ struct XStr : public OPERX {
 };
 typedef XStr<XLOPER12> Str12;
 typedef XStr<XLOPER>   Str;
-typedef X_(Str)       StrX;
+typedef X_(Str)        StrX;
 
 template<class X>
 struct XBool : public OPERX {

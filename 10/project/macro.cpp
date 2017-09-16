@@ -1,7 +1,6 @@
 // macro.cpp - Rename this file and replace this description.
-// Uncomment the following line to use features for Excel2007 and above.
-//#define EXCEL12
-#include "xll/xll.h"
+// You need this: http://support.microsoft.com/kb/128185
+#include "header.h"
 
 using namespace xll;
 
@@ -11,6 +10,7 @@ xll_macro(void)
 {
 #pragma XLLEXPORT
 	// macro body goes here
+	ExcelX(xlcAlert, OPERX(_T("Hello World!")));
 
 	return 1; // or 0 on failure
 }	

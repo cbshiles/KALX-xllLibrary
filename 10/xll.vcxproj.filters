@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{df355961-7d46-4083-8694-0e0b6f84c35b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maml">
+      <UniqueIdentifier>{87873510-5355-4239-8e70-66b2d5536e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CodePlex">
+      <UniqueIdentifier>{018eec40-3a3c-42ff-855e-1ecfc307d68d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\xll\addin.h">
@@ -30,9 +39,6 @@
     <ClInclude Include="..\xll\dialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\xll\ensure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\xll\error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,9 +49,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\xll\handle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\xll\hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\xll\limits.h">
@@ -60,13 +63,7 @@
     <ClInclude Include="..\xll\register.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\xll\registry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\xll\traits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\xll\XLCALL.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\xll\xll.h">
@@ -74,6 +71,52 @@
     </ClInclude>
     <ClInclude Include="..\xll\xloper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\hash.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\document.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\entities.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\file.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\srng.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\uuid.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\XLCALL.H" />
+    <ClInclude Include="..\xll\utility\ensure.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\registry.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\locus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\message.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\env.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\on.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="winhttp.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\strings.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\xml.h">
+      <Filter>maml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,15 +132,50 @@
     <ClCompile Include="..\xll\error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\xll\handle.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\xll\maml\document.cpp">
+      <Filter>maml</Filter>
     </ClCompile>
-    <ClCompile Include="..\xll\XLCALL.CPP">
+    <ClCompile Include="..\xll\XLCALL.CPP" />
+    <ClCompile Include="..\xll\on.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\xll\README.txt" />
+    <None Include="..\codeplex\Documentation.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Home.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\FAQ.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\AddIn.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\OPER.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Excel.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Register.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Args.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\FP.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\xll\TODO.txt" />
+    <None Include="..\codeplex\User.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Developer.html">
+      <Filter>CodePlex</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\xll\XLCALL32.LIB" />

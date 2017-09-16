@@ -1,129 +1,182 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Fragment>
-    <DirectoryRef Id="SrcFolder">
-            <Component Id="cmp060A57823DADC4660125EE8DFBE6756D" Guid="7E8136EC-BB0E-4910-A2EF-9160D1A1B5F9">
-                <File Id="fil24871C6F6F5691210912C1FB35CCCDAF" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\addin.h" />
+    <Fragment>
+        <DirectoryRef Id="SrcFolder">
+            <Component Id="cmp472E6ABDBE3859D79357355AB5F76077" Guid="D765F77D-98E1-40AE-911A-96DEF2E488E1">
+                <File Id="filA0C2792F0F290A592F406BE7BC673B5C" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\addin.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpF834AA4EAF154F7461A8BC8EABB8B0A2" Guid="CC4835CA-146C-440E-8EE4-8665E60A1721">
-                <File Id="filF5D525D602DFFFEAD6DF4BA96EAA14AB" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\args.h" />
+            <Component Id="cmp8B05B1E73DBA189BBD5328104A7CAEE3" Guid="3569DBB4-B333-434F-A8DB-FDB639B053E7">
+                <File Id="filE58B5F3FED796E9A65BBDE2BD7B6731B" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\args.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp40188A4C05BAFE5043FF0BB213D869DC" Guid="00161BE7-598E-48F3-A11D-D80BE56A75ED">
-                <File Id="filF95292ABF81AFE1A61C3703B2F11AD37" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\auto.cpp" />
+            <Component Id="cmpD0A0FB4F36D9F28519C70A38F8E99A7C" Guid="527F8CE8-7F89-4AE1-95CC-EC62906F9163">
+                <File Id="fil49A74A08D1AF1DA3628870B111DB69F0" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\auto.cpp" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpD7B3F72458F3B17883DB274D9A9D9035" Guid="D55A0D3E-D3CB-4D39-B5BA-22BBAD5448AF">
-                <File Id="filD816F78BD0EAD8828B0E4972C1153A32" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\auto.h" />
+            <Component Id="cmp2E3E0A8B5AA0F3144E9EC553D4491DCF" Guid="32EDA9FD-653F-446A-B894-BA137A83B7C6">
+                <File Id="fil1AC9233692D946C4A23F29FF9FF76987" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\auto.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp92B5AF7515F806E37ED0E0C6F82C84A6" Guid="12285480-9FB5-4C90-B3BF-000E2B02912D">
-                <File Id="fil62403D3D99B81D537BDA87E49207F9EB" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\debug.cpp" />
+            <Component Id="cmpECD9BC2F7B463A78BA161C902D365BD1" Guid="76CB7B2D-92F3-43EA-A212-522E0952829C">
+                <File Id="fil3CF0A66231B45C3CF42516C10ACEF6F6" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\debug.cpp" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp1D0199B3C0E96AB79E510839C90589FC" Guid="1FA66A04-FCBE-4F68-AFFB-8A4EE8DEA894">
-                <File Id="fil472D0C013B5ED84B1D582FAD7F326241" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\defines.h" />
+            <Component Id="cmp933BCB7F6D2F1D7D047998EB6F959016" Guid="8D42A689-9AEE-4263-821C-F6A6B016D5B2">
+                <File Id="fil9A9884BCDA959C33A093ABAD587ACE22" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\defines.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp26618FFC6F9D2327F0A3F3B1DD92A09A" Guid="440EF6EE-C187-437A-903C-944D49D8D41D">
-                <File Id="fil265B2E0A468D7C41B691D066AFDE1C8A" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\dialog.h" />
+            <Component Id="cmpD28F7092965E0046A70BC1B2E2955BC1" Guid="1DC8F116-BD6C-46A4-A9DC-F7C500BF8895">
+                <File Id="fil2ACD0C1E10A20193926F645FAC0AF831" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\dialog.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp052EE17B9EFDF9B3073C9B5CD8B952D7" Guid="8262AA4D-7386-4271-8034-428789160722">
-                <File Id="fil03415B7A7093069AB166DDA010FFECB7" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\dllmain.cpp" />
+            <Component Id="cmpBBDC8E957034A2768F62E0E6E031F292" Guid="38402EE7-09E5-4316-BA5C-E64B971CB0DD">
+                <File Id="filA8C5B369ED49A5AE5AD2C8C9A23DB44F" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\dllmain.cpp" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp39CD49FC79AE71A0F1660E62682909D0" Guid="E926D478-7356-4A58-A458-003AEFB25F11">
-                <File Id="fil3A01AA9B54032D763E1DD3F4989493AA" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\ensure.h" />
+            <Component Id="cmp116617A464CF1EBD2DFF1BE0AC14DCBF" Guid="AA472838-6BB4-477F-80F1-B6F7F80AF448">
+                <File Id="fil62F6DA3BC5AA0B9C506BB9B00D52456F" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\error.cpp" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp87C7D7D5FC5C20D74EF85CAD1021D0C8" Guid="8E804ACA-0B2C-43A8-8DAB-4C5ABCAC0D2D">
-                <File Id="fil49C8E175E643760B2FB2BB2DEBAC623F" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\error.cpp" />
+            <Component Id="cmp7337E6C3E5542854E8257717E05178E5" Guid="CD75E414-0C0D-4FB9-B264-6AB4437D293B">
+                <File Id="fil108A612B7FD6A31770A13271FBD67C7A" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\error.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpC8B4A78A024DDBD71398B19210A60537" Guid="6B3633BD-8EE9-4990-956E-EE323330920B">
-                <File Id="filBBD94AA53F366F063DB2D23E1E237242" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\error.h" />
+            <Component Id="cmpF24962737DD62344A229A8DEE3D5ECB0" Guid="2BD1BA01-F577-4340-B623-D0D94D93FF27">
+                <File Id="fil6D6DAAA000FAB92BFD3D55B7C750F7F8" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\excel.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpCE75F2E80760CE94FAE6C179FAB0361C" Guid="1418D03B-0BB6-40BA-B5B9-5C9186FFF5D5">
-                <File Id="fil3A22AEB04D49B3E69D9FCD5B50DCDE7E" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\excel.h" />
+            <Component Id="cmp599908CA1C440FC3C258FA2952B05522" Guid="2156BB9C-EA34-4B6D-B989-164F6D4A113D">
+                <File Id="fil7251E0444BF928F6A2D610BC2FFFEF26" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\fp.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp698AA78A4411F5AA0C686DACA021ABC8" Guid="EBBEFA02-A142-443D-A723-F9699D388F47">
-                <File Id="filCF26AC162696CF0299F0435BC6C53C3C" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\fp.h" />
+            <Component Id="cmp2D7AFBFE1C5BC371B4782A61C88ABE42" Guid="6A6992D0-37C9-4049-B9A6-F363E6B31F2B">
+                <File Id="fil3F5484A0E71E0C49FD0D4550A5ACE1AC" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\handle.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp960278C942AC10012A3A9B6126D3EA52" Guid="7E5AD6B5-EE1B-4D08-8BBB-DFD0C0FD2940">
-                <File Id="fil5CBBB4FA85D114C3A054A7974043243D" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\handle.cpp" />
+            <Component Id="cmpFCBC1648FE058B20D4895F55BF92CF23" Guid="7EDC88EF-73DC-458B-B8C5-885DA799643D">
+                <File Id="filF144AC8C62DD349288463EB6CBF4EF84" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\limits.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpE65CB23E65022808055EF7F27791AEA2" Guid="7B1D92A6-A59E-48D9-BAC1-E3BF81C39473">
-                <File Id="fil5AD7014807143C0CB16F8A0BD2867A46" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\handle.h" />
+          <Component Id="cmpCEE148FF835841CE803CAE47590B80C3" Guid="CEE148FF-8358-41CE-803C-AE47590B80C3">
+            <File Id="filCEE148FF835841CE803CAE47590B80C3" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\locus.h" ReadOnly="yes" />
+          </Component>
+          <Component Id="cmp93E5BD4FF5B4F639DBCAE159B1F46CEF" Guid="72E9AAA7-B6E7-4E41-A35D-B18565BE00B2">
+                <File Id="fil42F16FCF9D1FC8A14354081423EC8A89" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\loper.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp8DAE899861AEF5AB88FA2C5B71098DA7" Guid="F6FA1880-7BFD-48AD-8FCB-B22227AABB82">
-                <File Id="filB611683466EBF77243615F77B0B60F7B" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\hash.h" />
+          <Component Id="cmpC4186EEB459E4A83A7FE9250501E2D7F" Guid="C4186EEB-459E-4A83-A7FE-9250501E2D7F">
+            <File Id="filC4186EEB459E4A83A7FE9250501E2D7F" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\on.h" ReadOnly="yes" />
+          </Component>
+          <Component Id="cmp939271E3F19A066BE9E37066742749ED" Guid="A4BEEC66-9A29-4FB2-858A-45E75CDB8C8E">
+                <File Id="fil5FD3CC2DF1DE6645878A678A070ACB24" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\oper.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp67ACE8463AF1538CA30F4FA43D9B80DC" Guid="937B47BC-49AD-488F-A084-9A19E5EDC89F">
-                <File Id="fil818B3998B41EBDB72314B4D5BC33BE60" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\limits.h" />
+            <Component Id="cmp6AD91E21A4EA9C79F8210FBF9E613CAE" Guid="F2643C71-49C4-462F-B3C6-F2B78C62AF6C">
+                <File Id="fil817DC4461F208C8D861EE27CCCE95F06" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\README.txt" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpE643C275B63A49F3B5CFDF4205829330" Guid="BE1EE1A1-9C70-4817-8399-4D33D1FF54DB">
-                <File Id="filE0FE0242127DF775D3424DFF05186408" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\loper.h" />
+            <Component Id="cmpC4669BD1CB6C24E02EE305C4FFA343E8" Guid="7B348D4C-9E33-43D5-80C1-C5409ECC1C20">
+                <File Id="fil4C3E6A848C5BD1C4D82C1EB337E940A2" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\register.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpEB679D4326B36D8A6C1031684F746138" Guid="F1761AAF-F344-4EA0-88D5-2E472BA48079">
-                <File Id="filBEEEF4EB5E719E028BFD086D19FF402A" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\oper.h" />
+            <Component Id="cmp9907463CAE6550EB36700F2E34669A7F" Guid="6ECAA74C-B379-4B85-AEC2-B2E5A874A657">
+                <File Id="filC2C737A5F73AC8C377CD10712A94F37F" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\traits.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpDFA9E9530A5A75B123D271046AF48498" Guid="E5C0952E-F900-44D1-9DDE-A440CC2BFDF9">
-                <File Id="fil02AD5025F392462254726C4DEBBE7D1B" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\README.txt" />
+            <Component Id="cmp1FD61B4B9CAC6CD49FE5DB46E7CD8422" Guid="4DBFF02F-61E7-40BC-8617-DC0FBF03999C">
+                <File Id="filD078B307880A7CEF9C47E655830ED290" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL.CPP" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp721A53D94D26441864933C19ED18790A" Guid="C312A294-7636-48F6-9E4B-33F5ABF6E1B1">
-                <File Id="fil790B092FF72CDA0FBA603D63B49C13D6" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\register.h" />
+            <Component Id="cmp1721044AEE4D1413145ADE309F5703E8" Guid="DD8340E5-0BD7-4666-9658-9AE7F3BDD649">
+                <File Id="filCF4B1F31CD89F3DD92EA4FC9E91B952D" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL.H" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp9BCE6DAE554E991DEEB49A2256F45856" Guid="694E6FC5-221D-4C69-BEA4-8468F3C9E68A">
-                <File Id="fil252B8BAFA10A1DD1BC76A1E86CF313EB" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\registry.h" />
+            <Component Id="cmpC65B1427E87A1E1E3908317E7BA551A7" Guid="125AE65D-DC4E-489E-A224-701D9D8915A7">
+                <File Id="filF91268F45ED777C1178AFC35C645DA1A" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL32.LIB" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp57C93FCAE47FD5AB64BFCB463FBEC571" Guid="3C812538-EBD3-499A-A2C0-264E90417585">
-                <File Id="filCEC8B9BEA64D2EB855DC92CD3175A07D" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\traits.h" />
+            <Component Id="cmpB008FB881EC54798854DE072DC918C2C" Guid="E113C5F4-80E4-4988-B979-054BE3BB3F32">
+                <File Id="fil19909A471969F686215F11819360C608" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\xll.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmpF151635051B6A8FB8DECB8ECF7777EA8" Guid="98117559-AE04-4652-9F9B-950DCBC4D40A">
-                <File Id="fil148EE6DA1360271F6EEEE6F271E6502D" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL.CPP" />
+            <Component Id="cmp49A4A9C48838989AEB74353447781D38" Guid="0798BFF2-6424-4A25-B1A9-109ED6129A6A">
+                <File Id="filBA0E0B22F2704EE5A859FC884F89AC60" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\xloper.h" ReadOnly="yes" />
             </Component>
-            <Component Id="cmp8759CFBF8AA2EDFD631BB3AC733FC426" Guid="50F1B596-5BFA-4783-B26F-6ECCBEE99E2F">
-                <File Id="fil414C19FA43315CEF206FC3DED6DCBA70" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL.H" />
-            </Component>
-            <Component Id="cmp6D3F27689ED96AE98D0689B5F8496213" Guid="78BDFB13-76A5-499C-BAB8-8D6DAE3D5549">
-                <File Id="fil1AA16F2888702230D1B93321BB4F77B4" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\XLCALL32.LIB" />
-            </Component>
-            <Component Id="cmp49C1D2CF4CC6F896409C900A2D662552" Guid="EEE8B3F7-CE3F-4382-8882-8702FA1FF371">
-                <File Id="filD0480A457D4E56360D5517BEADB9D376" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\xll.h" />
-            </Component>
-            <Component Id="cmp0AE3A7244EAFDB3FE5304D811079B401" Guid="2B6730A9-0746-4052-93A3-E36F91F57E3D">
-                <File Id="fil7DBD0D6720E47020BEA14DB3CF755A5D" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\xloper.h" />
-            </Component>
-            <Directory Id="dir595C3AC42F67DC7BA603B78DA2A19B43" Name="x64">
-                <Component Id="cmp3DD34F3F31C05866259F26512DF89967" Guid="32562A7C-91F4-4FE6-AE0C-D3A7C9674D52">
-                    <File Id="filFA39944D27706588699774044AF521DE" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\x64\XLCALL32.LIB" />
+            <Directory Id="dir04E738198AA1E21FDB0EDAF3215DCBF2" Name="maml">
+                <Component Id="cmp9B06F93D803B361A0F6E69C6FD718AF5" Guid="650D0481-207D-4736-AE67-C24A1CEE3A6B">
+                    <File Id="fil0F49C90550CF55CEF41106A1F770FEC8" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\maml\document.cpp" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmp198C6D3D7CFE3FDC88ABFFA514028E03" Guid="27516CA4-4676-473C-A084-08D5EA758282">
+                    <File Id="fil3B48E2E9522ACD0722A0F8CB98B3378A" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\maml\document.h" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmpEF164AA9B167DA7FAECE7F55F5401F14" Guid="814BC9E2-76CA-4B3D-B220-FC352A57C6A9">
+                    <File Id="filB34D5777D52DFA21527B4E7277C2BB35" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\maml\entities.h" ReadOnly="yes" />
+                </Component>
+              <Component Id="cmpDB94BC8D70CA439B8C68B643278844B5" Guid="DB94BC8D-70CA-439B-8C68-B643278844B5">
+                <File Id="filDB94BC8D70CA439B8C68B643278844B5" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\maml\xml.h" ReadOnly="yes" />
+              </Component>
+            </Directory>
+            <Directory Id="dir1E04856AD8320BDA071D795A4EB005FF" Name="utility">
+                <Component Id="cmpEB0E8AA64F1F27D6C7C86D235EAC07F5" Guid="65DB9CC3-4C12-4B11-886B-36AB0EC2AA00">
+                    <File Id="fil0061B0B8645B1FA3126F921CF2945574" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\ensure.h" ReadOnly="yes" />
+                </Component>
+              <Component Id="cmpA20B25A902824669A15B0397E795543C" Guid="A20B25A9-0282-4669-A15B-0397E795543C">
+                <File Id="filA20B25A902824669A15B0397E795543C" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\env.h" ReadOnly="yes" />
+              </Component>
+              <Component Id="cmp92357939CD3B81A1D637408321E5A002" Guid="F76ACD90-AFD8-4226-AAE8-E7B0A42C5276">
+                    <File Id="fil09CDC491F443E042AEE458B75563CB24" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\file.h" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmp6BACC59BB1024C1CF7A2B42F8A14A099" Guid="5F981B1A-0B9D-4AFF-9242-0D25CA037E88">
+                    <File Id="fil22922310B5848CAEA830496EA86470D1" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\hash.h" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmpC979F26094DC270B77C25F813FBD25DC" Guid="9D933698-0E92-4180-B7B7-E74BE5E30B66">
+                    <File Id="filC4FBCAB57289FED8F4E2BE6B252B0BAA" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\message.h" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmpF93AE7B39F2350559895BF6166F8A717" Guid="486C5C82-E1D0-4D7F-ABE3-79B84F348830">
+                    <File Id="fil4C0153E72D7C0487397D557568084774" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\registry.h" ReadOnly="yes" />
+                </Component>
+                <Component Id="cmp7A61BB55B7E3A4FB4B4E83A4FDBEFFD0" Guid="D4D21634-8BCA-400F-AF9B-77D55221BE4B">
+                    <File Id="fil690872969542097D453F8931308F063B" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\srng.h" ReadOnly="yes" />
+                </Component>
+              <Component Id="cmp5FBA3250F91446B58DD212B4FEA297DC" Guid="5FBA3250-F914-46B5-8DD2-12B4FEA297DC">
+                <File Id="fil5FBA3250F91446B58DD212B4FEA297DC" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\strings.h" ReadOnly="yes" />
+              </Component>
+              <Component Id="cmp4C5ED6F974149FF8DAC6588767F4903D" Guid="4FD39984-6BEB-4B97-B00B-2A18B5B73299">
+                    <File Id="fil778E0C539BF74D4944E58E5AEFD2B8D7" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\uuid.h" ReadOnly="yes" />
+                </Component>
+              <Component Id="cmpC83E799A97674BDA9B5CEA34570A459B" Guid="C83E799A-9767-4BDA-9B5C-EA34570A459B">
+                <File Id="filC83E799A97674BDA9B5CEA34570A459B" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\utility\winhttp.h" ReadOnly="yes" />
+              </Component>
+            </Directory>
+            <Directory Id="dir7C2C83F6CC8AC47D9022A8AD6554F0C1" Name="x64">
+                <Component Id="cmpE770C21AEBEAA8E8B59A42EFA407A94F" Guid="7A1AF533-8C3D-4F4F-8E14-F4D22AD55B65">
+                    <File Id="filBB55CDF6AD4BB253C4278349F311871C" KeyPath="yes" Source="$(var.xll.ProjectDir)..\xll\x64\XLCALL32.LIB" ReadOnly="yes" />
                 </Component>
             </Directory>
         </DirectoryRef>
     </Fragment>
     <Fragment>
         <ComponentGroup Id="XllFiles">
-            <ComponentRef Id="cmp060A57823DADC4660125EE8DFBE6756D" />
-            <ComponentRef Id="cmpF834AA4EAF154F7461A8BC8EABB8B0A2" />
-            <ComponentRef Id="cmp40188A4C05BAFE5043FF0BB213D869DC" />
-            <ComponentRef Id="cmpD7B3F72458F3B17883DB274D9A9D9035" />
-            <ComponentRef Id="cmp92B5AF7515F806E37ED0E0C6F82C84A6" />
-            <ComponentRef Id="cmp1D0199B3C0E96AB79E510839C90589FC" />
-            <ComponentRef Id="cmp26618FFC6F9D2327F0A3F3B1DD92A09A" />
-            <ComponentRef Id="cmp052EE17B9EFDF9B3073C9B5CD8B952D7" />
-            <ComponentRef Id="cmp39CD49FC79AE71A0F1660E62682909D0" />
-            <ComponentRef Id="cmp87C7D7D5FC5C20D74EF85CAD1021D0C8" />
-            <ComponentRef Id="cmpC8B4A78A024DDBD71398B19210A60537" />
-            <ComponentRef Id="cmpCE75F2E80760CE94FAE6C179FAB0361C" />
-            <ComponentRef Id="cmp698AA78A4411F5AA0C686DACA021ABC8" />
-            <ComponentRef Id="cmp960278C942AC10012A3A9B6126D3EA52" />
-            <ComponentRef Id="cmpE65CB23E65022808055EF7F27791AEA2" />
-            <ComponentRef Id="cmp8DAE899861AEF5AB88FA2C5B71098DA7" />
-            <ComponentRef Id="cmp67ACE8463AF1538CA30F4FA43D9B80DC" />
-            <ComponentRef Id="cmpE643C275B63A49F3B5CFDF4205829330" />
-            <ComponentRef Id="cmpEB679D4326B36D8A6C1031684F746138" />
-            <ComponentRef Id="cmpDFA9E9530A5A75B123D271046AF48498" />
-            <ComponentRef Id="cmp721A53D94D26441864933C19ED18790A" />
-            <ComponentRef Id="cmp9BCE6DAE554E991DEEB49A2256F45856" />
-            <ComponentRef Id="cmp57C93FCAE47FD5AB64BFCB463FBEC571" />
-            <ComponentRef Id="cmpF151635051B6A8FB8DECB8ECF7777EA8" />
-            <ComponentRef Id="cmp8759CFBF8AA2EDFD631BB3AC733FC426" />
-            <ComponentRef Id="cmp6D3F27689ED96AE98D0689B5F8496213" />
-            <ComponentRef Id="cmp49C1D2CF4CC6F896409C900A2D662552" />
-            <ComponentRef Id="cmp0AE3A7244EAFDB3FE5304D811079B401" />
-            <ComponentRef Id="cmp3DD34F3F31C05866259F26512DF89967" />
+            <ComponentRef Id="cmp472E6ABDBE3859D79357355AB5F76077" />
+            <ComponentRef Id="cmp8B05B1E73DBA189BBD5328104A7CAEE3" />
+            <ComponentRef Id="cmpD0A0FB4F36D9F28519C70A38F8E99A7C" />
+            <ComponentRef Id="cmp2E3E0A8B5AA0F3144E9EC553D4491DCF" />
+            <ComponentRef Id="cmpECD9BC2F7B463A78BA161C902D365BD1" />
+            <ComponentRef Id="cmp933BCB7F6D2F1D7D047998EB6F959016" />
+            <ComponentRef Id="cmpD28F7092965E0046A70BC1B2E2955BC1" />
+            <ComponentRef Id="cmpBBDC8E957034A2768F62E0E6E031F292" />
+            <ComponentRef Id="cmp116617A464CF1EBD2DFF1BE0AC14DCBF" />
+            <ComponentRef Id="cmp7337E6C3E5542854E8257717E05178E5" />
+            <ComponentRef Id="cmpF24962737DD62344A229A8DEE3D5ECB0" />
+            <ComponentRef Id="cmp599908CA1C440FC3C258FA2952B05522" />
+            <ComponentRef Id="cmp2D7AFBFE1C5BC371B4782A61C88ABE42" />
+            <ComponentRef Id="cmpFCBC1648FE058B20D4895F55BF92CF23" />
+            <ComponentRef Id="cmp93E5BD4FF5B4F639DBCAE159B1F46CEF" />
+            <ComponentRef Id="cmp939271E3F19A066BE9E37066742749ED" />
+            <ComponentRef Id="cmp6AD91E21A4EA9C79F8210FBF9E613CAE" />
+            <ComponentRef Id="cmpC4669BD1CB6C24E02EE305C4FFA343E8" />
+            <ComponentRef Id="cmp9907463CAE6550EB36700F2E34669A7F" />
+            <ComponentRef Id="cmp1FD61B4B9CAC6CD49FE5DB46E7CD8422" />
+            <ComponentRef Id="cmp1721044AEE4D1413145ADE309F5703E8" />
+            <ComponentRef Id="cmpC65B1427E87A1E1E3908317E7BA551A7" />
+            <ComponentRef Id="cmpB008FB881EC54798854DE072DC918C2C" />
+            <ComponentRef Id="cmp49A4A9C48838989AEB74353447781D38" />
+            <ComponentRef Id="cmp9B06F93D803B361A0F6E69C6FD718AF5" />
+            <ComponentRef Id="cmp198C6D3D7CFE3FDC88ABFFA514028E03" />
+            <ComponentRef Id="cmpEF164AA9B167DA7FAECE7F55F5401F14" />
+            <ComponentRef Id="cmpEB0E8AA64F1F27D6C7C86D235EAC07F5" />
+            <ComponentRef Id="cmp92357939CD3B81A1D637408321E5A002" />
+            <ComponentRef Id="cmp6BACC59BB1024C1CF7A2B42F8A14A099" />
+            <ComponentRef Id="cmpC979F26094DC270B77C25F813FBD25DC" />
+            <ComponentRef Id="cmpF93AE7B39F2350559895BF6166F8A717" />
+            <ComponentRef Id="cmp7A61BB55B7E3A4FB4B4E83A4FDBEFFD0" />
+            <ComponentRef Id="cmp4C5ED6F974149FF8DAC6588767F4903D" />
+            <ComponentRef Id="cmpE770C21AEBEAA8E8B59A42EFA407A94F" />
+            <ComponentRef Id="cmpCEE148FF835841CE803CAE47590B80C3" />
+            <ComponentRef Id="cmpA20B25A902824669A15B0397E795543C" />
+            <ComponentRef Id="cmpC4186EEB459E4A83A7FE9250501E2D7F" />
+            <ComponentRef Id="cmpC83E799A97674BDA9B5CEA34570A459B" />
+            <ComponentRef Id="cmp5FBA3250F91446B58DD212B4FEA297DC" />
+            <ComponentRef Id="cmpDB94BC8D70CA439B8C68B643278844B5" />
+          
         </ComponentGroup>
     </Fragment>
 </Wix>

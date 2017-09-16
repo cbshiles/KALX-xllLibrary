@@ -1,7 +1,7 @@
 // limits.h - Excel limits parameterized by XLOPER and XLOPER12.
 // Copyright (c) 2006 KALX, LLC. All rights reserved. No warranty is made.
 #pragma once
-#include "xll/defines.h"
+#include "defines.h"
 
 namespace xll {
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define ProductVersion="1.0.5.0" ?>
- 
+  <?define ProductVersion="1.0.135.0" ?>
   <Product Id="*"
            Name="xll"
            Language="1033"
@@ -11,12 +10,13 @@
            UpgradeCode="7F550062-AD60-49F4-B9DF-9BFD4960B1C3"
    >
     <Package Id="*"
-            Keywords="Installer, Excel, add-in, xll"
+            Keywords="Excel, add-in, xll"
             Description="A library for creating Excel xll add-ins."
             Comments="Installs source code, libraries...."
             InstallerVersion="200"
             Compressed="yes"
             Manufacturer="KALX"
+            ReadOnly="yes"
     />
       <Upgrade Id="7F550062-AD60-49F4-B9DF-9BFD4960B1C3">
         <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
@@ -29,11 +29,11 @@
     
     <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-    <Property Id='ARPCOMMENTS'>ARPCOMMENTS</Property>
+    <Property Id='ARPCOMMENTS'>Library for creating Excel xll add-ins</Property>
     <Property Id='ARPCONTACT'>info@kalx.net</Property>
-    <Property Id='ARPHELPLINK'>http://xll.codeplex.com</Property>
-    <Property Id='ARPURLINFOABOUT'>http://xll.codeplex.com</Property>
-    <Property Id='ARPURLUPDATEINFO'>ARPURLUPDATEINFO</Property>
+    <Property Id='ARPHELPLINK'>http://nxll.codeplex.com</Property>
+    <Property Id='ARPURLINFOABOUT'>http://nxll.codeplex.com</Property>
+    <Property Id='ARPURLUPDATEINFO'>http://kalx.net/dnload/setup.zip</Property>
     <Property Id='ARPREADME'>appreadme</Property>
     <Property Id='ARPSIZE'>4</Property>
 
@@ -46,48 +46,71 @@
               <Directory Id="LibReleaseFolder" Name="Release" />
               <Directory Id="TestBuildFolder" Name="test" />
             </Directory>
-              <Directory Id="TestSrcFolder" Name="test" />
-              <Directory Id="SrcFolder" Name="xll" />
+            <Directory Id="TestSrcFolder" Name="test" />
+            <Directory Id="SrcFolder" Name="xll" />
+            <Directory Id="SandcastleFolder" Name="Sandcastle">
+              <Directory Id="SandcastleDataFolder" Name="Data">
+                <Directory Id="ReflectionFolder" Name="Reflection">
+                  <Component Id="EmptyReflectionFolder" Guid="3927AED0-58E3-4979-ADEB-CA639DF2EA44">
+                    <CreateFolder />
+                  </Component>
+                </Directory>
+              </Directory>
+            </Directory>
+            <Directory Id="ConfigFolder" Name="config" />
           </Directory>
         </Directory>
       </Directory>
     </Directory>
 
-
     <DirectoryRef Id="LibDebugFolder">
       <Component Id="LibDebug" Guid="85F6FAC8-0335-4CD2-8E62-A142FFD9744E">
-        <File Id="LibDebug.lib" Source="$(var.xll.ProjectDir)Debug\xll.lib" />
-        <File Id="Vc100.pdb" Source="$(var.xll.ProjectDir)Debug\vc100.pdb" />
+        <File Id="LibDebug.lib" Source="$(var.xll.ProjectDir)Debug\xll.lib" ReadOnly="no" />
+        <File Id="Vc100.pdb" Source="$(var.xll.ProjectDir)Debug\vc100.pdb" ReadOnly="no" />
       </Component>
     </DirectoryRef>
     
     <DirectoryRef Id="LibReleaseFolder">
       <Component Id="LibRelease" Guid="14C49C24-3A58-47F4-BC90-3F24FD04B3B6">
-        <File Id="LibRelease.lib" Source="$(var.xll.ProjectDir)Release\xll.lib" />
+        <File Id="LibRelease.lib" Source="$(var.xll.ProjectDir)Release\xll.lib" ReadOnly="yes" />
       </Component>
     </DirectoryRef>
 
     <DirectoryRef Id="BuildFolder10">
       <Component Id="Build10" Guid="0CC6D62D-B8F2-4E25-89BE-4877D4867B89">
-        <File Id="Soluton10" Source="$(var.xll.ProjectDir)xll.sln" />
-        <File Id="Project10" Source="$(var.xll.ProjectDir)xll.vcxproj" />
-        <File Id="Filter10" Source="$(var.xll.ProjectDir)xll.vcxproj.filters" />
+        <File Id="Soluton10" Source="$(var.xll.ProjectDir)xll.sln" ReadOnly="yes" />
+        <File Id="Project10" Source="$(var.xll.ProjectDir)xll.vcxproj" ReadOnly="yes" />
+        <File Id="Filter10" Source="$(var.xll.ProjectDir)xll.vcxproj.filters" ReadOnly="yes" />
       </Component>
     </DirectoryRef>
 
     <DirectoryRef Id="TestBuildFolder">
       <Component Id="TestBuild" Guid="36B82EC6-C347-4ADA-A5F9-5C1D4BAA3622">
-        <File Id="test.vcxproj" Source="$(var.xll.ProjectDir)test\test.vcxproj" />
-        <File Id="test.vcxproj.filters" Source="$(var.xll.ProjectDir)test\test.vcxproj.filters" />
+        <File Id="test.vcxproj" Source="$(var.xll.ProjectDir)test\test.vcxproj" ReadOnly="yes" />
+        <File Id="test.vcxproj.filters" Source="$(var.xll.ProjectDir)test\test.vcxproj.filters" ReadOnly="yes" />
+        <File Id="test.vcxproj.user" Source="$(var.xll.ProjectDir)test\test.vcxproj.user" ReadOnly="no" />
       </Component>
     </DirectoryRef>
 
     <DirectoryRef Id="TestSrcFolder">
       <Component Id="TestSrc" Guid="50732915-431C-4728-9BF5-9FF52EF53EB3">
-        <File Id="test.h" Source="$(var.xll.ProjectDir)..\test\test.h" />
-        <File Id="test.cpp" Source="$(var.xll.ProjectDir)..\test\test.cpp" />
-        <File Id="random.cpp" Source="$(var.xll.ProjectDir)..\test\random.cpp" />
-        <File Id="huey.cpp" Source="$(var.xll.ProjectDir)..\test\huey.cpp" />
+        <File Id="async.cpp" Source="$(var.xll.ProjectDir)..\test\async.cpp" ReadOnly="yes" />
+        <File Id="auto.cpp" Source="$(var.xll.ProjectDir)..\test\auto.cpp" ReadOnly="yes" />
+        <File Id="handles.cpp" Source="$(var.xll.ProjectDir)..\test\handles.cpp" ReadOnly="yes" />
+        <File Id="locus.cpp" Source="$(var.xll.ProjectDir)..\test\locus.cpp" ReadOnly="yes" />
+        <File Id="minimal.cpp" Source="$(var.xll.ProjectDir)..\test\minimal.cpp" ReadOnly="yes" />
+        <File Id="test.h" Source="$(var.xll.ProjectDir)..\test\test.h" ReadOnly="yes" />
+        <File Id="test.cpp" Source="$(var.xll.ProjectDir)..\test\test.cpp" ReadOnly="yes" />
+        <File Id="howto.cpp" Source="$(var.xll.ProjectDir)..\test\howto.cpp" ReadOnly="yes" />
+        <File Id="xml.cpp" Source="$(var.xll.ProjectDir)..\test\xml.cpp" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ConfigFolder">
+      <Component Id="Config" Guid="41D2D3D7-0F1C-4DEF-A1B7-D24AF07DAAA1">
+        <File Id="conceptual.config" Source="$(var.xll.ProjectDir)..\config\conceptual.config" />
+        <File Id="PresentationStyleBuilderContent.xml" Source="$(var.xll.ProjectDir)..\config\PresentationStyleBuilderContent.xml" />
+        <File Id="SharedBuilderContent.xml" Source="$(var.xll.ProjectDir)..\config\SharedBuilderContent.xml" />
       </Component>
     </DirectoryRef>
 
@@ -101,7 +124,10 @@
       <ComponentRef Id="Build10" />
       <ComponentRef Id="TestBuild" />
       <ComponentRef Id="TestSrc" />
+      <ComponentRef Id="Config" />
+      <ComponentRef Id="EmptyReflectionFolder" />
       <ComponentGroupRef Id="XllFiles" />
+      <ComponentGroupRef Id="SandcastleFiles" />
     </Feature>
  <!--     
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />

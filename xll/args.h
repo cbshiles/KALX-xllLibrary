@@ -3,8 +3,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "xll/hash.h"
-#include "xll/oper.h"
+#include "utility/hash.h"
+#include "oper.h"
 
 namespace xll {
 
@@ -43,47 +43,13 @@ namespace xll {
 		return _T("???Unknown???");
 	}
 
-	template<class X>
-	inline typename xll::traits<X>::xcstr ArgTypeJava(const XOPER<X>& type)
-	{
-		ensure (type.xltype == xltypeStr);
-		ensure (type.val.str[0] > 0);
-
-		switch (type.val.str[1]) {
-			case _T('A') : return _T("boolean");
-			case _T('B') : return _T("double");
-			case _T('C') : return _T("String");
-			case _T('D') : return _T("String");
-			case _T('E') : return _T("double");
-			case _T('F') : return _T("String");
-			case _T('G') : return _T("String");
-			case _T('H') : return _T("int"); //!!!unsigned short, but Java does not support
-			case _T('I') : return _T("short");
-			case _T('J') : return _T("long");
-			case _T('K') : return _T("double[]");
-			case _T('L') : return _T("boolean");
-			case _T('M') : return _T("short");
-			case _T('N') : return _T("long");
-			case _T('P') : return _T("Range");
-			case _T('R') : return _T("Reference");
-			// not used!!!
-			case _T('!') : return _T("Volatile");
-			case _T('#') : return _T("Uncalced");
-			case _T('$') : return _T("ThreadSafe");
-			case _T('&') : return _T("ClusterSafe");
-		}
-
-		return _T("???Unknown???");
-	}
-
 	// Single argument to Excel add-in.
 	template<class X>
 	class XArg {
-		typedef typename xll::traits<X>::xcstr xcstr;
-		typedef typename xll::traits<X>::xchar xchar;
-
 		XOPER<X> type_, name_, help_;
 	public:
+		typedef typename xll::traits<X>::xcstr xcstr;
+
 		XArg(xcstr type, xcstr name, xcstr help)
 			: type_(type), name_(name), help_(help)
 		{ }
@@ -105,38 +71,40 @@ namespace xll {
 	typedef XArg<XLOPER12> Arg12;
 	typedef X_(Arg)        ArgX;
 
-
 	// Build up arguments for call to xlfRegister.
 	template<class X>
 	class XArgs {
-		typedef typename xll::traits<X>::xcstr xcstr;
-		typedef typename xll::traits<X>::xchar xchar;
-
 		std::vector<XArg<X> > args_;
 		mutable XOPER<X> arg_; // to be passed to xlfRegister
-		std::basic_string<xchar> doc_;
 		unsigned int tid_; // help file topic id
+		std::vector<XOPER<X> > alias_;
+		std::basic_string<typename traits<X>::xchar> doc_, related_;
+		XOPER<X> sort_; // sort key for documentation
 	public:
+		typedef typename xll::traits<X>::xcstr xcstr;
+		typedef typename xll::traits<X>::xchar xchar;
+		typedef typename xll::traits<X>::xword xword;
+
 		XArgs()
 			: tid_(0)
 		{
 		}
 		// documentation
 		XArgs(xcstr category)
-			: arg_(1, 7), tid_(utility::hash(category, 0, true))
+			: arg_(1, 7), tid_(utility::hash<xchar>(category, 0, true))
 		{
 			arg_[5] = -1;
 			arg_[6] = category;
 		}
-		// C function and Excel name
+		// macro: C function and Excel name
 		XArgs(xcstr procedure, xcstr function_text)
-			: arg_(1, 6), tid_(0)
+			: arg_(1, 10), tid_(0)
 		{
 			arg_[1] = procedure;
 			arg_[3] = function_text;
 			arg_[5] = 2; // macro
 		}
-		// C function, C signature, Excel name and argument prompt
+		// user defined function: C function, C signature, Excel name and argument prompt
 		XArgs(xcstr procedure, xcstr type_text, xcstr function_text, xcstr argument_text,
 			xcstr category = traits<X>::null(), xcstr function_help = traits<X>::null())
 				: arg_(1, 10), tid_(0)
@@ -161,6 +129,7 @@ namespace xll {
 			arg_[4] = traits<X>::null();
 			arg_[5] = 1; // function
 		}
+		/*
 		XArgs(const XArgs& arg)
 			: args_(arg.args_), arg_(arg.arg_), doc_(arg.doc_), tid_(arg.tid_)
 		{
@@ -179,7 +148,12 @@ namespace xll {
 		~XArgs()
 		{
 		}
+		*/
 
+		bool isHiddenFunction(void) const
+		{
+			return arg_[5] == 0;
+		}
 		bool isFunction(void) const
 		{
 			return arg_[5] == 1;
@@ -212,14 +186,15 @@ namespace xll {
 
 			return *this;
 		}
-		size_t ArgSize(void) const
+		xword ArgCount(void) const
 		{
-			return args_.size();
+			return static_cast<xll::traits<X>::xword>(args_.size());
 		}
 		// 1-based individual argument
-		const XArg<X>& Arg(size_t i) const
+		const XArg<X>& Arg(xword i) const
 		{
 			ensure (i != 0);
+			ensure (i <= ArgCount());
 
 			return args_[i - 1];
 		}
@@ -246,7 +221,7 @@ namespace xll {
 		}
 
 		// C signature
-		const OPERX& TypeText() const
+		const XOPER<X>& TypeText() const
 		{
 			return arg_[2];
 		}
@@ -266,7 +241,7 @@ namespace xll {
 		}
 
 		// Excel function name
-		const OPERX& FunctionText() const
+		const XOPER<X>& FunctionText() const
 		{
 			return arg_[3];
 		}
@@ -284,7 +259,7 @@ namespace xll {
 		}
 
 		// Excel Control-Shift-A argument prompt
-		const OPERX& ArgumentText() const
+		const XOPER<X>& ArgumentText() const
 		{
 			return arg_[4];
 		}
@@ -302,7 +277,7 @@ namespace xll {
 		}
 
 		// 0 - hidden function, 1 - function, 2 - macro
-		const OPERX& MacroType() const
+		const XOPER<X>& MacroType() const
 		{
 			return arg_[5];
 		}
@@ -326,7 +301,7 @@ namespace xll {
 		}
 
 		// Function Wizard category
-		const OPERX& Category() const
+		const XOPER<X>& Category() const
 		{
 			return arg_[6];
 		}
@@ -338,7 +313,7 @@ namespace xll {
 		}
 
 		// CONTROL+SHIFT+shorcut_text single character macro shortcut
-		const OPERX& ShortcutText() const
+		const XOPER<X>& ShortcutText() const
 		{
 			return arg_[7];
 		}
@@ -356,7 +331,7 @@ namespace xll {
 		}
 
 		// path\file.chm!help_context_id
-		const OPERX& HelpTopic() const
+		const XOPER<X>& HelpTopic() const
 		{
 			return arg_[8];
 		}
@@ -374,7 +349,7 @@ namespace xll {
 		}
 
 		// Function description in Function Wizard
-		const OPERX& FunctionHelp() const
+		const XOPER<X>& FunctionHelp() const
 		{
 			return arg_[9];
 		}
@@ -391,20 +366,20 @@ namespace xll {
 			return *this;
 		}
 
-		size_t ArgumentCount(void) const
+		xword ArgumentCount(void) const
 		{
 			return arg_.size() - 9;
 		}
 		// Individual help in the Function Wizard.
 
-		const OPERX& ArgumentHelp(size_t i) const
+		const XOPER<X>& ArgumentHelp(xword i) const
 		{
 			ensure (i > 0);
 			ensure (9 + i < arg_.size());
 
 			return arg_[9 + i];
 		}
-		XArgs& ArgumentHelp(xcstr argument_help, size_t i = 0)
+		XArgs& ArgumentHelp(xcstr argument_help, xword i = 0)
 		{
 			if (i) {
 				if (10 + i >= arg_.size()) {
@@ -413,12 +388,12 @@ namespace xll {
 				arg_[10 + i] = argument_help;
 			}
 			else {
-				arg_.push_back(XStr<X>(argument_help));
+				arg_.push_back(XOPER<X>(argument_help));
 			}
 
 			return *this;
 		}
-		XArgs& ArgumentHelp(const X& argument_help, size_t i = 0)
+		XArgs& ArgumentHelp(const X& argument_help, xword i = 0)
 		{
 			if (i) {
 				if (10 + i >= arg_.size()) {
@@ -438,17 +413,59 @@ namespace xll {
 		{
 			return doc_.c_str();
 		}
-		// Only generate documentation if this is called.
-		XArgs& Documentation(xcstr doc = traits<X>::null())
+		xcstr Related(void) const
 		{
-			doc_ = doc;
-
+			return related_.c_str();
+		}
+		// Only generate documentation if this is called.
+		XArgs& Documentation(xcstr doc = 0, xcstr see_also = 0)
+		{
+#ifdef _DEBUG
+			if (doc)
+				doc_ = doc;
+			if (see_also)
+				related_ = see_also;
+#else // C4100
+			doc = doc;
+			see_also = see_also; 
+#endif
 			if (!tid_) {
-				LPCTSTR ft = FunctionText().val.str;
+				traits<X>::xcstr ft = FunctionText().val.str;
 				tid_ = utility::hash(ft + 1, ft[0], true);
 			}
 			
 			return *this;
+		}
+		XArgs& Alias(xcstr alias)
+		{
+			alias_.push_back(XOPER<X>(alias));
+
+			return *this;
+		}
+		const std::vector< XOPER<X> >& Alias(void) const
+		{
+			return alias_;
+		}
+		/*
+		XArgs& Sort(xcstr sort)
+		{
+			sort_ = sort;
+
+			return *this;
+		}
+		*/
+		XArgs& Sort(const XOPER<X>& key1, const XOPER<X>& key2 = XOPER<X>())
+		{
+			sort_.resize(1, 2);
+			
+			sort_[0] = key1;
+			sort_[1] = key2;
+
+			return *this;
+		}
+		const XOPER<X>& Sort(void) const
+		{
+			return sort_.size() > 1 ? sort_ : FunctionText();
 		}
 
 		// arguments xlfRegister needs
@@ -465,8 +482,9 @@ namespace xll {
 			if (tid_) {
 				XOPER<X> topic(GetName());
 				// replace xll by chm
-				traits<X>::strncpy(topic.val.str + topic.val.str[0] - 2, traits<X>::chm(), 3);
-				topic = Excel<X>(xlfConcatenate, topic, XOPER<X>(_T("!")), XOPER<X>(tid_));
+				XOPER<X> search = Excel<X>(xlfSearch, traits<X>::dotll(), topic);
+				ensure (search.xltype == xltypeNum);
+				topic = Excel<X>(xlfConcatenate, Excel<X>(xlfLeft, topic, search), traits<X>::chmbang(), XOPER<X>(tid_));
 				arg_[8] = topic;
 			}
 			for (int i = 1; i < size(); ++i)
@@ -495,4 +513,11 @@ namespace xll {
 	typedef XArgs<XLOPER12> Function12;
 	typedef X_(Args)        FunctionX;
 
+	typedef XArgs<XLOPER>   Macro;
+	typedef XArgs<XLOPER12> Macro12;
+	typedef X_(Args)        MacroX;
+
+	typedef XArgs<XLOPER>   Document;
+	typedef XArgs<XLOPER12> Document12;
+	typedef X_(Args)        DocumentX;
 } // namespace xll

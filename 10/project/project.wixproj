@@ -26,6 +26,7 @@
   <ItemGroup>
     <Content Include="default.js" />
     <Content Include="function.cpp" />
+    <Content Include="header.h" />
     <Content Include="macro.cpp" />
     <Content Include="Templates.inf" />
     <Content Include="xll.ico" />

@@ -2,7 +2,13 @@
 // Copyright (c) 2011 KALX, LLC. All rights reserved. No warranty is made.
 //#define EXCEL12 // to build add-ins for Excel 2007 and later
 #pragma once
-#include "xll/addin.h"
-#include "xll/handle.h"
+#include "on.h"
+#include "fp.h"
+#include "dialog.h"
+#include "error.h"
+#include "handle.h"
+#include "locus.h"
+#include "maml/entities.h"
+#include "maml/document.h"
 
 

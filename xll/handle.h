@@ -1,29 +1,11 @@
 // handle.h - simple handle class
 // Copyright (c) 2006 KALX, LLC. All rights reserved. No warranty is made.
-// Loading xll will cause handles to recalculate. (???)
-
 #pragma once
-#include <list>
+#include <set>
 #include <memory>
-#include "xll/oper.h"
+#include "oper.h"
 
-// use char* instead???
 typedef double HANDLEX;
-//#define HANDLEX double
-/*
-template<class T>
-inline T* handlex(double h)
-{
-	union { double d; T* h; } dh;
-
-	dh.d = h;
-
-	return dh.h;
-}
-*/
-// handle must be same size as pointer
-//#define compile_time_assert(cond) extern char assertion[(cond) ? 1 : 0]
-//compile_time_assert(sizeof(long) == sizeof(void*));
 
 #define XLL_HANDLE XLL_DOUBLE
 #define XLL_HANDLE12 XLL_DOUBLE12
@@ -33,11 +15,9 @@ inline T* handlex(double h)
 #define XLL_HANDLEX XLL_HANDLE
 #endif
 
+//static_assert (sizeof(HANDLEX) == sizeof(long long), "handles and long longs must be the same size");
+
 namespace xll {
-
-
-	// complete list of all handles
-	extern std::list< std::tr1::shared_ptr<void> > handle_list;
 
 	// handle to pointer
 	template<class T>
@@ -46,6 +26,7 @@ namespace xll {
 		union { T* p_; HANDLEX x_; long l_; } px;
 		
 		px.l_ = static_cast<long>(x);
+//		px.x_ = x;
 
 		return px.p_;
 	}
@@ -58,18 +39,52 @@ namespace xll {
 		px.p_ = p;
 
 		return static_cast<HANDLEX>(px.l_);
+//		return static_cast<HANDLEX>(px.x_);
 	}
 
 	template<class T>
 	class handle {
-		T* p_;
+		typedef typename std::set<std::shared_ptr<T>> handle_set;
+		static handle_set& handles(void)
+		{
+			static handle_set h_;
+
+			return h_;
+		}
+		static void erase(T* p)
+		{
+			handle_set& h(handles());
+			handle_set::iterator i = find(p);
+
+			if (i != h.end()) {
+				h.erase(i);
+			}
+		}
+		// return 0 if p not in handle set
+		static T* check(T* p)
+		{
+			handle_set& h(handles());
+			handle_set::const_iterator i = find(p);
+		
+			return i == h.end() ? 0 : p;
+		}
+		static void insert(T* p)
+		{
+			std::pair<handle_set::iterator,bool> ib = handles().insert(std::shared_ptr<T>(p));
+
+			// better not already exist
+			ensure (ib.second == true);
+		}
 
 		//!!!could be more efficient!!!
-		static std::list< std::tr1::shared_ptr<void> >::iterator find(T* p)
+		static typename handle_set::iterator find(T* p)
 		{
-			std::list< std::tr1::shared_ptr<void> >::iterator i;
+			// calls delete on p ???WTF!!!
+			//return handles().find(std::shared_ptr<T>(p));
 
-			for (i = handle_list.begin(); i != handle_list.end(); ++i) {
+			handle_set::const_iterator i;
+
+			for (i = handles().begin(); i != handles().end(); ++i) {
 				if (i->get() == p) {
 					break;
 				}
@@ -82,7 +97,7 @@ namespace xll {
 		{
 			T* q(0);
 
-			LOPERX x = Excel<XLOPERX>(xlCoerce, Excel<XLOPERX>(xlfCaller));
+			OPERX x = Excel<XLOPERX>(xlCoerce, Excel<XLOPERX>(xlfCaller));
 			if (x.xltype == xltypeNum) {
 				// otherwise it is junk
 				q = h2p<T>(static_cast<HANDLEX>(x.val.num));
@@ -90,6 +105,9 @@ namespace xll {
 
 			return q;
 		}
+
+		T* p_;
+
 	public:
 		// Called as handle<T> h(new T(...));
 		// in constructor. Must be uncalced.
@@ -99,14 +117,12 @@ namespace xll {
 			if (p) {
 				T* q = old_handle();
 				if (q) {
-					// if we've seen it before, erase it
-					std::list< std::tr1::shared_ptr<void> >::iterator i(find(q));
-					if (i != handle_list.end())
-						handle_list.erase(i);
+					erase(q); // 
 				}
 				// do after checking old handle
 				// might have same handle in old spreadsheet
-				handle_list.push_back(std::tr1::shared_ptr<T>(p));
+				insert(p);
+				
 			}
 		}
 		// Called as handle<T> h(handle) in "member" function.
@@ -117,9 +133,7 @@ namespace xll {
 			p_ = h2p<T>(p);
 
 			if (checked) {
-				std::list< std::tr1::shared_ptr<void> >::iterator i(find(p_));
-				if (i == handle_list.end())
-					p_ = 0;
+				p_ = check(p_);
 			}
 		}
 		handle(const handle& p)
@@ -135,13 +149,13 @@ namespace xll {
 		~handle()
 		{ }
 
-		// ignore p
+		// ignore p???
 		void free()
 		{
 			delete p_;
 		}
 
-		HANDLEX handlex() const
+		HANDLEX get() const
 		{
 			return p2h<T>(p_);
 		}
@@ -150,6 +164,10 @@ namespace xll {
 			return p_;
 		}
 		const T* operator->() const
+		{
+			return p_;
+		}
+		T* ptr()
 		{
 			return p_;
 		}

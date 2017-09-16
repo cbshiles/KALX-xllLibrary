@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <new>
-#include "xll/error.h"
+#include "traits.h"
 
 namespace xll {
 
@@ -34,15 +34,16 @@ namespace xll {
 		return is_empty(fp) ? 0 : fp.rows * fp.columns;
 	}
 
+	// cyclic index never throws
 	inline double
-	index(const _FP& fp, traits<XLOPER>::xword i, traits<XLOPER>::xword j)
+	index(const _FP& fp, traits<XLOPER>::xword i)
 	{
-		return fp.array[i*fp.columns + j];
+		return fp.array[i%size(fp)];
 	}
 	inline double
-	index(const _FP12& fp, traits<XLOPER12>::xword i, traits<XLOPER12>::xword j)
+	index(const _FP12& fp, traits<XLOPER12>::xword i)
 	{
-		return fp.array[i*fp.columns + j];
+		return fp.array[i%size(fp)];
 	}
 
 	inline double&
@@ -56,6 +57,28 @@ namespace xll {
 		return fp.array[i*fp.columns + j];
 	}
 
+	inline double
+	index(const _FP& fp, traits<XLOPER>::xword i, traits<XLOPER>::xword j)
+	{
+		return index(fp, i*fp.columns + j);
+	}
+	inline double
+	index(const _FP12& fp, traits<XLOPER12>::xword i, traits<XLOPER12>::xword j)
+	{
+		return index(fp, i*fp.columns + j);
+	}
+/*
+	inline double&
+	index(_FP& fp, traits<XLOPER>::xword i, traits<XLOPER>::xword j)
+	{
+		return index(fp, i*fp.columns + j);
+	}
+	inline double&
+	index(_FP12& fp, traits<XLOPER12>::xword i, traits<XLOPER12>::xword j)
+	{
+		return index(fp, i*fp.columns + j);
+	}
+*/
 	inline double*
 	begin(_FP& fp)
 	{
@@ -100,9 +123,17 @@ namespace xll {
 
 	template<class X>
 	class XFP {
+	public:
+		typedef double value_type;
+		typedef value_type* pointer;		
+		typedef const value_type* const_pointer;		
+		typedef value_type& reference;		
+		typedef const value_type& const_reference;		
+		typedef typename traits<X>::xword size_type;
+		typedef std::ptrdiff_t difference_type;
+
 		typedef typename traits<X>::xword xword;
 		typedef typename traits<X>::xfp xfp;
-	public:
 		XFP()
 			: buf(0)
 		{
@@ -134,6 +165,13 @@ namespace xll {
 
 			return *this;
 		}
+		XFP& operator=(const xfp& x)
+		{
+			realloc(x.rows, x.columns);
+			copy(x.array);
+
+			return *this;
+		}
 		~XFP()
 		{
 			free(buf);
@@ -145,18 +183,27 @@ namespace xll {
 
 			return *this;
 		}
-		// so FPX x; ... return &x returns the right thing
-		xfp* operator&()
+		XFP& set(xword r, xword c, const double* pa)
 		{
-			return pf;
+			realloc(r, c);
+			copy(pa);
+
+			return *this;
 		}
-		const xfp* operator&() const
-		{
-			return pf;
-		}
+	private:
 		const XFP* this_() const
 		{
 			return this;
+		}
+	public:
+		xfp* get(void)
+		{
+			return pf;
+		}
+		// use when returning to Excel
+		const xfp* get(void) const
+		{
+			return pf;
 		}
 		double* array()
 		{
@@ -175,26 +222,25 @@ namespace xll {
 			return buf ? (is_empty() ? 0 : pf->rows * pf->columns) : 0;
 		}
 
-		void reshape(int r, int c)
+		void reshape(xword r, xword c)
 		{
 			realloc(r, c);
 		}
 		double operator[](xword i) const
 		{
-			return pf->array[i];
+			return index(*this, i);
 		}
 		double& operator[](xword i)
 		{
-			return pf->array[i];
+			return pf->array[i%size()];
 		}
 		double operator()(xword i, xword j) const
 		{
-			return index(*this, i, j);
-//			return operator[](i*columns() + j);
+			return index(*pf, i, j);
 		}
 		double& operator()(xword i, xword j)
 		{
-			return operator[](i*columns() + j);
+			return index(*pf, i, j);
 		}
 
 		double* begin()
@@ -213,30 +259,70 @@ namespace xll {
 		{
 			return pf->array + size();
 		}
+		template<class T>
+		XFP& push_back(const T& t)
+		{
+			return push_back(&t, &t + 1);
+		}
+		template<class T>
+		XFP& push_back(const T* b, const T *e, bool stack = false)
+		{
+			xword n = static_cast<xword>(std::distance(b, e));
+
+			if (is_empty()) {
+				reshape(1, n);
+			}
+			else if (stack) {
+				ensure (columns() == 1 || columns() == n);
+
+				if (columns() == 1)
+					reshape(rows() + n, 1);
+				else
+					reshape(rows() + 1, n);
+			}
+			else if (columns() == 1) { // stack
+				reshape(size() + n, 1);
+			}
+			else if (rows() == 1) {
+				reshape(1, size() + n);
+			}
+			else {
+				ensure (columns() == n);
+				reshape(rows() + 1, columns());
+			}
+
+			std::copy(b, e, end() - n);
+
+			return *this;
+		}
 
 		bool is_empty(void) const
 		{
 			return xll::is_empty(*pf);
 		}
 	private:
+		void copy(const double* p)
+		{
+			pf->array[0] = p[0]; // could be empty array
+			for (xword i = 1; i < size(); ++i)
+				pf->array[i] = p[i];
+		}
 		void copy(const xfp* p)
 		{
 			ensure (pf->rows == p->rows);
 			ensure (pf->columns == p->columns);
 
-			pf->array[0] = p->array[0]; // could be empty array
-			for (xword i = 1; i < xll::size(*p); ++i)
-				pf->array[i] = p->array[i];
+			copy(p->array);
 		}
-		void realloc(int r, int c)
+		void realloc(xword r, xword c)
 		{
-			if (!buf || size() != static_cast<xword>(r)*static_cast<xword>(c)) {
+			if (!buf || size() != r*c) {
 				buf = (char*)::realloc(buf, sizeof(xfp) + r*c*sizeof(double));
 				pf = reinterpret_cast<xfp*>(new (buf) xfp);
 			}
 			//!!! check size
-			pf->rows = static_cast<xword>(r);
-			pf->columns = static_cast<xword>(c);
+			pf->rows = r;
+			pf->columns = c;
 
 			// empty array
 			if (r*c == 0) {
