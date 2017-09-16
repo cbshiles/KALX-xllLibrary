@@ -1,0 +1,24 @@
+cmake_minimum_required( VERSION 3.6 )
+
+project( xll
+	 VERSION   0.1.0
+	 LANGUAGES CXX )
+
+set( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" )
+
+message( "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
+message( "CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+
+# determine bitness platform
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  set(64_BIT_OS TRUE)
+  message( "64-bit os detected" )
+else()
+  set(32_BIT_OS TRUE)
+  message( "32-bit os detected" )
+endif()
+
+add_subdirectory("xll")
+add_subdirectory("test")
+
+

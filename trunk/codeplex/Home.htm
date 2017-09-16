@@ -1,0 +1,76 @@
+<p>
+    This is a library for creating xll add-in's for Excel from 97 through 2010. It makes
+    every feature of the Excel 2010 SDK available to you including the big grid, wide
+    character strings, and asynchronous functions. It is the easiest way to
+    integrate your C and C++, or even Fortran, code into Excel to achieve the highest
+    possible performance. You can also generate native documentation using the
+    <a title="same tool" href="http://sandcastle.codeplex.com/" target="_blank">same tool</a>
+    Microsoft uses for their help files.</p>
+<p>
+    If you need a small, fast, portable, and self contained way to extend Excel's
+    functionality, this is the library for you. Just hand someone the xll and chm help
+    file that you create and they are ready to go. No need to figure out what version
+    of .Net they run, no Primary Interop Assemblies to worry about, no managed code
+    that forces you to marshall data back and forth from Excel. There
+    are also no automagic code generators, no proprietary markup languages to learn,
+    and no wizards that hide things behind your back. Everything is just pure,
+    modern, and readable C++.</p>
+<h3>
+    INSTALLATION</h3>
+<p>
+    Run <a href="http://kalx.net/dnload/setup.zip">setup.msi</a> and <a href="http://kalx.net/dnload/project.zip">
+        project.msi</a>. You will need to install <a href="http://go.microsoft.com/fwlink/?LinkId=14188">
+            htmlhelp.exe</a> from Microsoft's <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=00535334-c8a6-452f-9aa0-d597d16580cc&amp;displaylang=en"
+                target="_blank">HTML Help Workshop</a> to build documentation. <span style="text-decoration: line-through;">
+                    Sadly, project templates do not work with VC++ 2010 Express.</span>
+    [7/1/2011 Fixed! Reinstall project.msi.]</p>
+<h3>
+    OPERATION</h3>
+<p>
+    Start Visual Studio 2010.<br />
+    File &gt; New &gt; Project... select XLL AddIn Project.<br />
+    Change the Name and Location of the project to anything you desire.<br />
+    Right click on your project, Build.<br />
+    Right click on your project, Debug &gt; Start new instance.</p>
+<p>
+    If all goes well, you should see <code>XLL.FUNCTION</code> show up under <code>My Category</code>
+    in the Function Wizard. You can set breakpoints by clicking to the left of any line
+    in the source code for <code>xll_function</code> in the file <code>function.cpp</code>.</p>
+<p>
+    To create HTML Help documentation, hit Alt-F8 then run <code>XLL.DOC</code>. Click
+    on <span style="color: #0000ff; text-decoration: underline;">Help on this function</span>
+    in the Function Wizard to start the help viewer.</p>
+<blockquote>
+    <img src="http://download.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=xll&amp;DownloadId=251325"
+        alt="Function Wizard" width="434" height="375" /></blockquote>
+<h5><a href="http://kalx.net/dnload/xll.wmv">INSTALLATION AND OPERATION VIDEO</a></h5>
+<h3>
+    CONGRATULATIONS!</h3>
+<p>
+    You have just created and documented your first Excel add-in. See the <a href="http://xll.codeplex.com/documentation"
+        target="_self">Documentation</a> to learn about all the cool stuff you can do
+    with this library then check out the Related Project to see it in action.</p>
+<h4>
+    CREDITS</h4>
+<p>
+    As with any non-trivial endeavor, this library leveraged off of the knowledge of
+    others. I give special thanks to the people that have spent many hours over the
+    years spelunking the deepest caves of the Excel SDK: Govert van Drimmelen, Mark
+    Joshi, J&eacute;r&ocirc;me LeCompte, Laurent Longre. Kudos to Eric Woodruff for
+    his excellent Sandcastle Help File Builder that made it possible for me to carve
+    out the subset of Sandcastle used here. My sincere apologies to anyone
+    I've neglected to mention.</p>
+<h4>
+    TESTIMONIALS</h4>
+<p>
+    <em>'Previously, we used VBA but it was so slow - by more than 70%!</em>' - Ki-Hwan
+    Bae</p>
+    <p>
+    <em>Thanks again for the awesome library!  I've been testing out a couple different methods/libraries 
+    for creating an Excel add-in, and so far using the XLL approach paired with your library is my favorite 
+    because it gives you all the low level access without hiding everything behind magic button code generators 
+    (like all the commercial products I've tested out seem to) while keeping the C++ complexity in check with the 
+    nice wrapper utility classes.
+    </em> - Colin Rodriguez
+    </p>
+

@@ -1,0 +1,16 @@
+<p>
+    The xll library function(s) <a href="http://xll.codeplex.com/SourceControl/changeset/view/8656#134570"
+        target="_blank"><code>Register</code></a> calls the Excel SDK API entry point&nbsp;<a
+            href="http://msdn.microsoft.com/en-us/library/bb687900.aspx" target="_blank"><code>xlfRegister</code></a>
+    to hook up your C/C++ function to Excel. All versions of the function&nbsp;ulimately
+    call <code>Register(const <a href="http://xll.codeplex.com/wikipage?title=Args&amp;referringTitle=Documentation">
+        Args</a>&amp;)</code>.</p>
+<p>
+    Typically this function is called for you by <code>xlAutoOpen</code>. Only use this
+    if you need to manually control registration. Keep in mind that if you do, then
+    you are also responsible for <a href="http://msdn.microsoft.com/en-us/library/bb687866.aspx"
+        target="_blank">unregistering</a> your function. You can do this using the xll
+    library function <code>Unregister</code>.</p>
+<p>
+    All of the information <code>Register</code> requires is collected in the <a href="http://xll.codeplex.com/wikipage?title=Args&amp;referringTitle=Documentation">
+        <code>Args</code></a> class.</p>

@@ -1,0 +1,75 @@
+cmake_minimum_required( VERSION 3.6 )
+
+project( xll_addin )
+
+# xll addin
+set( xll_addin_name   xll_test )
+set( xll_addin_dir    "${PROJECT_SOURCE_DIR}" )
+set( xll_addin_export "TEST_EXPORTS" )
+
+# For now just include all header/source files for the addin
+# - alternatively explicitly specify header/source files
+file( GLOB_RECURSE xll_addin_hdrs RELATIVE ${xll_addin_dir} "*.h" )
+file( GLOB_RECURSE xll_addin_srcs RELATIVE ${xll_addin_dir} "*.cpp" )
+
+add_library(
+  ${xll_addin_name}
+  SHARED
+  ${xll_addin_hdrs}
+  ${xll_addin_srcs} )
+
+####
+## info
+
+message( "xll_addin_name   = ${xll_addin_name}" )
+message( "xll_addin_dir    = ${xll_addin_dir}" )
+message( "xll_addin_export = ${xll_addin_export}" )
+message( "xll_addin_hdrs   = ${xll_addin_hdrs}\n" )
+message( "xll_addin_srcs   = ${xll_addin_srcs}\n" )
+
+message( "\nxll_core_dir    = ${xll_core_dir}" )
+
+# dependency on xll core
+target_include_directories(
+  ${xll_addin_name}
+  PUBLIC
+  xll_core )
+
+target_link_libraries(
+  ${xll_addin_name}
+  PRIVATE
+  xll ) # actual lib is xll.lib, not xll_core.lib
+
+target_link_libraries(
+  ${xll_addin_name}
+  PRIVATE
+  ${xlcall32_lib} )
+
+# /J is crucial to not get allocation errors at startup!?
+# /LTCG:incremental does not work with /OPT:REF, /OPT:ICF..
+set_target_properties(
+  ${xll_addin_name}
+  PROPERTIES
+  LINK_FLAGS    "/SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF"
+  OUTPUT_NAME   ${xll_addin_name}
+  PREFIX        ""
+  SUFFIX        ".xll"
+  )
+
+target_compile_options(
+  ${xll_addin_name}
+  PUBLIC
+  $<$<CONFIG:RELWITHDEBINFO>: /J /W4 /Gd /GS /Oi /O2 /MT /Zi>
+  $<$<CONFIG:RELEASE>:        /J /W4 /Gd /GS /Oi /O2 /MT>  
+  $<$<CONFIG:DEBUG>:          /J /W4 /Gd /GS /Zi /Od /MTd>  
+)
+
+# installation
+install(
+  TARGETS             ${xll_addin_name}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  COMPONENT           ${xll_addin_name}
+  )
+

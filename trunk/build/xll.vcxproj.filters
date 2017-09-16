@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{df355961-7d46-4083-8694-0e0b6f84c35b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maml">
+      <UniqueIdentifier>{87873510-5355-4239-8e70-66b2d5536e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CodePlex">
+      <UniqueIdentifier>{018eec40-3a3c-42ff-855e-1ecfc307d68d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CodePlex\Tutorial">
+      <UniqueIdentifier>{2f389a47-9724-41e9-9bb1-aba1d3a9a62e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="snippets">
+      <UniqueIdentifier>{1297d8b1-101d-4b04-a089-21d53928b194}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\xll\addin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\auto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\excel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\fp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\limits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\loper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\oper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\register.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\xll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\xloper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\hash.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\document.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\entities.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\file.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\srng.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\uuid.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\XLCALL.H" />
+    <ClInclude Include="..\xll\utility\ensure.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\registry.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\locus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\message.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\env.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\strings.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\xml.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\maml\maml.h">
+      <Filter>maml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\on.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\cred.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\winhttp.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\nhandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\dropdown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\log.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\paste.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\utility\timer.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\range.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\macrofun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xll\struct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\xll\auto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\maml\document.cpp">
+      <Filter>maml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\XLCALL.CPP" />
+    <ClCompile Include="..\xll\paste.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\range.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xll\enum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\xll\README.txt" />
+    <None Include="..\codeplex\Documentation.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Home.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\FAQ.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\AddIn.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\OPER.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Excel.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Register.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Args.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\FP.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\xll\TODO.txt" />
+    <None Include="..\codeplex\User.htm">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Developer.html">
+      <Filter>CodePlex</Filter>
+    </None>
+    <None Include="..\codeplex\Tutorial.htm">
+      <Filter>CodePlex\Tutorial</Filter>
+    </None>
+    <None Include="..\snippets\arg.snippet">
+      <Filter>snippets</Filter>
+    </None>
+    <None Include="..\snippets\addin.snippet">
+      <Filter>snippets</Filter>
+    </None>
+  </ItemGroup>
+</Project>

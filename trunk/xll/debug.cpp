@@ -44,8 +44,6 @@ struct CrtDbg {
 #pragma init_seg(lib)
 CrtDbg crtDbg;
 
-#ifndef XLL_NO_TYPEINFO_CACHE
-
 #include <typeinfo>
 
 struct clear_type_info_cache {
@@ -64,5 +62,4 @@ struct clear_type_info_cache {
 	}
 };// ctic;
 
-#endif // XLL_NO_TYPEINFO_CACHE
 #endif // _DEBUG

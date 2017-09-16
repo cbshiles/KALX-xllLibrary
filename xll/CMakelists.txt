@@ -1,0 +1,96 @@
+cmake_minimum_required( VERSION 3.6 )
+
+project( xll_core )
+
+option( XLL_CORE_INSTALL "Install xll core library + headers" OFF )
+option( XLL_12 "Build against xll12" OFF )
+
+####
+## xll library
+
+set( xll_core_name xll )
+
+# ensure that addins can find the location of the xll header files in other CMakelists.txt files.
+# Bizarre cmake quirk... need to set seperate in PARENT_SCOPE
+set( xll_core_dir "${PROJECT_SOURCE_DIR}/.." PARENT_SCOPE )
+set( xll_core_dir "${PROJECT_SOURCE_DIR}/.." )
+set( xll_src_dir "${xll_core_dir}/xll" )
+
+file( GLOB_RECURSE xll_hdrs RELATIVE ${xll_src_dir} "*.h" )
+file( GLOB_RECURSE xll_srcs RELATIVE ${xll_src_dir} "*.cpp" )
+
+add_library(
+  ${xll_core_name}
+  ${xll_hdrs}
+  ${xll_srcs} )
+
+# ensure dependent targets know where to find header files
+target_include_directories(
+  ${xll_core_name}
+  PUBLIC
+  ${xll_core_dir} )
+
+####
+## dependency to link to
+
+if(64_BIT_OS)
+  set( xlcall32_lib "${xll_src_dir}/x64/XLCALL32.lib" PARENT_SCOPE )
+  set( xlcall32_lib "${xll_src_dir}/x64/XLCALL32.lib" )
+else()
+  set( xlcall32_lib "${xll_src_dir}/XLCALL32.lib" PARENT_SCOPE )
+  set( xlcall32_lib "${xll_src_dir}/XLCALL32.lib" )
+endif()
+
+set_target_properties(
+  ${xll_core_name}
+  PROPERTIES
+  LANGUAGE      CXX
+  LINK_FLAGS    "/SUBSYSTEM:WINDOWS"
+  )
+
+message( "Switching off compilation of debug.cpp:clear_type_info_cache" )
+target_compile_definitions(
+  ${xll_core_name}
+  PUBLIC
+  XLL_NO_TYPEINFO_CACHE=1
+  )
+
+target_compile_options(
+  ${xll_core_name}
+  PUBLIC
+  $<$<CONFIG:RELWITHDEBINFO>: /J /W4 /Gd /GS /Oi /O2 /MT /Zi>
+  $<$<CONFIG:RELEASE>:        /J /W4 /Gd /GS /Oi /O2 /MT>  
+  $<$<CONFIG:DEBUG>:          /J /W4 /Gd /GS /Zi /Od /MTd>  
+)
+
+####
+## info
+
+message( "xll_core_name = ${xll_core_name}" )
+message( "xll_core_dir  = ${xll_core_dir}" )
+message( "xll_src_dir   = ${xll_src_dir}" )
+message( "xlcall32_lib  = ${xlcall32_lib}\n" )
+message( "xll_hdrs      = ${xll_hdrs}\n" )
+message( "xll_srcs      = ${xll_srcs}\n" )
+
+####
+## install library + header files
+
+if(XLL_CORE_INSTALL)
+
+  install(
+    TARGETS             ${xll_core_name}
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    COMPONENT           ${xll_core_name}
+    )
+
+  install(
+    DIRECTORY              ${xll_src_dir}
+    DESTINATION            include/xll
+    COMPONENT              ${xll_core_name}
+    FILES_MATCHING PATTERN "*.h"
+    )
+  
+endif()

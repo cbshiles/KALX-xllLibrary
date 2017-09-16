@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- pv = y%10.m.d, vv = 10 or 11 -->
+  <?define ProductVersion="3.9.26" ?>
+  <Product Id="*"
+           Name="xll"
+           Language="1033"
+           Codepage="1252"
+           Version="$(var.ProductVersion)"
+           Manufacturer="KALX, LLC"
+           UpgradeCode="7F550062-AD60-49F4-B9DF-9BFD4960B1C3"
+   >
+    <Package Id="*"
+            Keywords="Excel, add-in, xll"
+            Description="A library for creating Excel xll add-ins."
+            Comments="Installs source code, libraries...."
+            InstallerVersion="200"
+            Compressed="yes"
+            Manufacturer="KALX"
+            ReadOnly="yes"
+    />
+      <Upgrade Id="7F550062-AD60-49F4-B9DF-9BFD4960B1C3">
+        <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
+        <UpgradeVersion OnlyDetect="no" Maximum="$(var.ProductVersion)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
+      </Upgrade>
+
+      <InstallExecuteSequence>
+        <RemoveExistingProducts After="InstallFinalize" />
+      </InstallExecuteSequence>
+    
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Property Id='ARPCOMMENTS'>Library for creating Excel xll add-ins</Property>
+    <Property Id='ARPCONTACT'>info@kalx.net</Property>
+    <Property Id='ARPHELPLINK'>http://xll.codeplex.com</Property>
+    <Property Id='ARPURLINFOABOUT'>http://xll.codeplex.com</Property>
+    <Property Id='ARPURLUPDATEINFO'>http://kalx.net/dnload/setup.zip</Property>
+    <Property Id='ARPREADME'>appreadme</Property>
+    <Property Id='ARPSIZE'>4</Property>
+
+    <!-- symbolic links for backward compatibility -->
+    <CustomAction Id="MklinkCmdId10" Property="MklinkCmd10"
+      Value='"[SystemFolder]cmd.exe" /c mklink /d "[INSTALLLOCATION]10" "[INSTALLLOCATION]v100"' Execute='immediate'/>
+    <CustomAction Id="MklinkCmd10" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" Return="ignore" />
+
+    <CustomAction Id="MklinkCmdId11" Property="MklinkCmd11"
+      Value='"[SystemFolder]cmd.exe" /c mklink /d "[INSTALLLOCATION]11" "[INSTALLLOCATION]v110"' Execute='immediate'/>
+    <CustomAction Id="MklinkCmd11" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" Return="ignore" />
+
+    <InstallExecuteSequence>
+      <Custom Action="MklinkCmdId10" Before="MklinkCmd10" />
+      <Custom Action="MklinkCmd10" Before="InstallFinalize" />
+      <Custom Action="MklinkCmdId11" Before="MklinkCmd11" />
+      <Custom Action="MklinkCmd11" Before="InstallFinalize" />
+    </InstallExecuteSequence>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="PERSONALFOLDER" Name="Documents"/>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Manfacturer" Name="KALX">
+          <Directory Id="INSTALLLOCATION" Name="xll">
+            <Directory Id="BuildFolder" Name="build" />
+            <Directory Id="BuildFolder10" Name="v100">
+              <Directory Id="LibDebugFolder10" Name="Debug" />
+              <Directory Id="LibReleaseFolder10" Name="Release" />
+              <Directory Id="BuildFolder10x64" Name="x64">
+                <Directory Id="LibDebugFolder10x64" Name="Debug" />
+                <Directory Id="LibReleaseFolder10x64" Name="Release" />
+              </Directory>
+            </Directory>
+            <Directory Id="BuildFolder11" Name="v110">
+              <Directory Id="LibDebugFolder11" Name="Debug" />
+              <Directory Id="LibReleaseFolder11" Name="Release" />
+              <Directory Id="BuildFolder11x64" Name="x64">
+                <Directory Id="LibDebugFolder11x64" Name="Debug" />
+                <Directory Id="LibReleaseFolder11x64" Name="Release" />
+              </Directory>
+            </Directory>
+            <Directory Id="TestSrcFolder" Name="test" />
+            <Directory Id="SrcFolder" Name="xll" />
+            <Directory Id="SandcastleFolder" Name="Sandcastle">
+              <Directory Id="SandcastleDataFolder" Name="Data">
+                <Directory Id="ReflectionFolder" Name="Reflection">
+                  <Component Id="EmptyReflectionFolder" Guid="3927AED0-58E3-4979-ADEB-CA639DF2EA44">
+                    <CreateFolder />
+                  </Component>
+                </Directory>
+              </Directory>
+            </Directory>
+            <Directory Id="ConfigFolder" Name="config" />
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="LibDebugFolder10">
+      <Component Id="LibDebug10" Guid="85F6FAC8-0335-4CD2-8E62-A142FFD9744E">
+        <File Id="LibDebug10.lib" Source="$(var.xll.ProjectDir)v100\Debug\xll.lib" ReadOnly="no" />
+        <File Id="Vc100.pdb" Source="$(var.xll.ProjectDir)v100\Debug\vc100.pdb" ReadOnly="no" />
+      </Component>
+    </DirectoryRef>
+    
+    <DirectoryRef Id="LibReleaseFolder10">
+      <Component Id="LibRelease10" Guid="14C49C24-3A58-47F4-BC90-3F24FD04B3B6">
+        <File Id="LibRelease10.lib" Source="$(var.xll.ProjectDir)v100\Release\xll.lib" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+
+    <DirectoryRef Id="LibDebugFolder10x64">
+      <Component Id="LibDebug10x64" Guid="F068F21F-1673-45F9-85B6-50896FEC59A7">
+        <File Id="LibDebug10x64.lib" Source="$(var.xll.ProjectDir)v100\x64\Debug\xll.lib" ReadOnly="no" />
+        <File Id="Vc100x64.pdb" Source="$(var.xll.ProjectDir)v100\x64\Debug\vc100.pdb" ReadOnly="no" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="LibReleaseFolder10x64">
+      <Component Id="LibRelease10x64" Guid="C872C9AA-978A-4278-9D09-30024F749951">
+        <File Id="LibRelease10x64.lib" Source="$(var.xll.ProjectDir)v100\x64\Release\xll.lib" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="LibDebugFolder11">
+      <Component Id="LibDebug11" Guid="1ABC12FB-DFCB-4454-A431-CDAED5E98DF4">
+        <File Id="LibDebug11.lib" Source="$(var.xll.ProjectDir)v110\Debug\xll.lib" ReadOnly="no" />
+        <File Id="Vc110.pdb" Source="$(var.xll.ProjectDir)v110\Debug\vc110.pdb" ReadOnly="no" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="LibReleaseFolder11">
+      <Component Id="LibRelease11" Guid="A3130A5B-E68B-4962-8FE5-E8D23E0629E8">
+        <File Id="LibRelease11.lib" Source="$(var.xll.ProjectDir)v110\Release\xll.lib" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+
+    <DirectoryRef Id="LibDebugFolder11x64">
+      <Component Id="LibDebug11x64" Guid="787861CC-7DF9-4FDC-A2CA-64072C9BE4E1">
+        <File Id="LibDebug11x64.lib" Source="$(var.xll.ProjectDir)v110\x64\Debug\xll.lib" ReadOnly="no" />
+        <File Id="Vc110x64.pdb" Source="$(var.xll.ProjectDir)v110\x64\Debug\vc110.pdb" ReadOnly="no" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="LibReleaseFolder11x64">
+      <Component Id="LibRelease11x64" Guid="E8C65B5A-328F-48EE-8577-A31F43755682">
+        <File Id="LibRelease11x64.lib" Source="$(var.xll.ProjectDir)v110\x64\Release\xll.lib" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="BuildFolder">
+      <Component Id="Build" Guid="0CC6D62D-B8F2-4E25-89BE-4877D4867B89">
+        <File Id="Soluton" Source="$(var.xll.ProjectDir)xll.sln" ReadOnly="yes" />
+        <File Id="Project" Source="$(var.xll.ProjectDir)xll.vcxproj" ReadOnly="yes" />
+        <File Id="Filter" Source="$(var.xll.ProjectDir)xll.vcxproj.filters" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="TestSrcFolder">
+      <Component Id="TestSrc" Guid="50732915-431C-4728-9BF5-9FF52EF53EB3">
+        <File Id="test.vcxproj" Source="$(var.xll.ProjectDir)..\test\test.vcxproj" ReadOnly="yes" />
+        <File Id="test.vcxproj.filters" Source="$(var.xll.ProjectDir)..\test\test.vcxproj.filters" ReadOnly="yes" />
+        <File Id="test.vcxproj.user" Source="$(var.xll.ProjectDir)..\test\test.vcxproj.user" ReadOnly="no" />
+        <File Id="async.cpp" Source="$(var.xll.ProjectDir)..\test\async.cpp" ReadOnly="yes" />
+        <File Id="auto.cpp" Source="$(var.xll.ProjectDir)..\test\auto.cpp" ReadOnly="yes" />
+        <File Id="handles.cpp" Source="$(var.xll.ProjectDir)..\test\handles.cpp" ReadOnly="yes" />
+        <File Id="locus.cpp" Source="$(var.xll.ProjectDir)..\test\locus.cpp" ReadOnly="yes" />
+        <File Id="minimal.cpp" Source="$(var.xll.ProjectDir)..\test\minimal.cpp" ReadOnly="yes" />
+        <File Id="test.h" Source="$(var.xll.ProjectDir)..\test\test.h" ReadOnly="yes" />
+        <File Id="test.cpp" Source="$(var.xll.ProjectDir)..\test\test.cpp" ReadOnly="yes" />
+        <File Id="howto.cpp" Source="$(var.xll.ProjectDir)..\test\howto.cpp" ReadOnly="yes" />
+        <File Id="xml.cpp" Source="$(var.xll.ProjectDir)..\test\xml.cpp" ReadOnly="yes" />
+        <File Id="cred.cpp" Source="$(var.xll.ProjectDir)..\test\cred.cpp" ReadOnly="yes" />
+        <File Id="xls.cpp" Source="$(var.xll.ProjectDir)..\test\xls.cpp" ReadOnly="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ConfigFolder">
+      <Component Id="Config" Guid="41D2D3D7-0F1C-4DEF-A1B7-D24AF07DAAA1">
+        <File Id="conceptual.config" Source="$(var.xll.ProjectDir)..\config\conceptual.config" />
+        <File Id="PresentationStyleBuilderContent.xml" Source="$(var.xll.ProjectDir)..\config\PresentationStyleBuilderContent.xml" />
+        <File Id="SharedBuilderContent.xml" Source="$(var.xll.ProjectDir)..\config\SharedBuilderContent.xml" />
+      </Component>
+    </DirectoryRef>
+
+    <SetDirectory Id='PERSONALFOLDER' Value='[PersonalFolder]'/>
+
+    <DirectoryRef Id="PERSONALFOLDER">
+      <Directory Id="VS2012" Name="Visual Studio 2012">
+        <Directory Id="VSTemplates" Name="Templates">
+          <Directory Id="VSProjectTemplates" Name="ProjectTemplates">
+            <Directory Id="VSVCProject" Name="Visual C++ Project">
+              <Component Id="XllAddIn" Guid="BFC9A4A8-5FF1-49DD-9FB6-CC5FE4991237">
+                <File Id="XllAddInZip" Source="$(var.xll.ProjectDir)project\XllAddIn.zip" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+                 
+    </DirectoryRef>
+    <Feature Id="ProductFeature" 
+             Title="Feature Title" 
+             Level="1" 
+             ConfigurableDirectory='INSTALLLOCATION'
+             Description='Feature Description'>
+      <ComponentRef Id="LibDebug10" />
+      <ComponentRef Id="LibRelease10" />
+      <ComponentRef Id="LibDebug10x64" />
+      <ComponentRef Id="LibRelease10x64" />
+      <ComponentRef Id="LibDebug11" />
+      <ComponentRef Id="LibRelease11" />
+      <ComponentRef Id="LibDebug11x64" />
+      <ComponentRef Id="LibRelease11x64" />
+      <ComponentRef Id="Build" />
+      <ComponentRef Id="TestSrc" />
+      <ComponentRef Id="Config" />
+      <ComponentRef Id="EmptyReflectionFolder" />
+      <ComponentGroupRef Id="XllFiles" />
+      <ComponentGroupRef Id="SandcastleFiles" />
+    </Feature>
+
+    <Feature Id="XllAddInFeature" Title="Xll Add-in Template" Level="1">
+      <ComponentRef Id="XllAddIn" />
+    </Feature>
+    
+    <!--     
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+    <UIRef Id="WixUI_Minimal" />
+    
+
+    <WixVariable Id="WixUIExclamationIco" Value="path\exclamation.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="path\information.ico" />
+    <WixVariable Id="WixUINewIco" Value="path\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="path\up.ico" />
+-->
+  </Product>
+</Wix>
